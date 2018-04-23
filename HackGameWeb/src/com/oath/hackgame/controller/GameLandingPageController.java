@@ -44,23 +44,21 @@ public class GameLandingPageController
 			}
 			gs.setGameState( initPlayer2PosX, initPlayer2PosY, Globals.currPositionPlayer2 );
 			initializePlayerClient();
-			JSONArray parentJsonArray = new JSONArray();
-			int arrayLength = gs.getGameStateArray().length;
-			for( int i = 0; i < arrayLength; i++ )
-			{
-				JSONArray childJsonArray = new JSONArray();
-				for( int j = 0; j < arrayLength; j++ )
-				{
-					childJsonArray.add( gs.getGameState( i, j ) );
-				}
-				parentJsonArray.add( childJsonArray );
-			}
+			JSONArray ja = new JSONArray();
 			JSONObject jo = new JSONObject();
-			jo.put( "player1name", player1.getPlayerName() );
-			jo.put( "player2name", player2.getPlayerName() );
-			parentJsonArray.add( jo );
+			/*
+			 * jo.put( "player1name", player1.getPlayerName() );
+			 * jo.put( "player2name", player2.getPlayerName() );
+			 */
+			jo.put( "player1name", "Parth" );
+			jo.put( "player2name", "Sunny" );
+			jo.put( "player1x", initPlayer1PosX );
+			jo.put( "player1y", initPlayer1PosY );
+			jo.put( "player2x", initPlayer2PosX );
+			jo.put( "player2y", initPlayer2PosY );
+			ja.add( jo );
 			StringWriter out = new StringWriter();
-			JSONValue.writeJSONString( parentJsonArray, out );
+			JSONValue.writeJSONString( ja, out );
 			String jsonText = out.toString();
 			response.setContentType( "text/plain" );
 			response.setHeader( "Content-Type", "application/x-www-form-urlencoded" );
@@ -86,7 +84,8 @@ public class GameLandingPageController
 	{
 		while( !gs.isGameOver() )
 		{
-			sendGameStateToPlayers( gs.getCurrMove() );
+			// sendGameStateToPlayers( gs.getCurrMove() );
+			simulateGame();
 			try
 			{
 				Thread.sleep( 10000 );
@@ -97,12 +96,45 @@ public class GameLandingPageController
 			}
 			validatePlayerMovesAndUpdateGameState();
 		}
-		getWinner();
 	}
 
-	private void getWinner()
+	private void simulateGame()
 	{
-		// TODO Auto-generated method stub
+		int sim1 = ThreadLocalRandom.current().nextInt( 0, 4 );
+		int sim2 = ThreadLocalRandom.current().nextInt( 0, 4 );
+		if( sim1 == 0 )
+		{
+			gs.setMoveListPlayer1( Globals.moves.Up.toString() );
+		}
+		else if( sim1 == 1 )
+		{
+			gs.setMoveListPlayer1( Globals.moves.Down.toString() );
+		}
+		else if( sim1 == 2 )
+		{
+			gs.setMoveListPlayer1( Globals.moves.Left.toString() );
+		}
+		else if( sim1 == 3 )
+		{
+			gs.setMoveListPlayer1( Globals.moves.Right.toString() );
+		}
+
+		if( sim2 == 0 )
+		{
+			gs.setMoveListPlayer2( Globals.moves.Up.toString() );
+		}
+		else if( sim2 == 1 )
+		{
+			gs.setMoveListPlayer2( Globals.moves.Down.toString() );
+		}
+		else if( sim2 == 2 )
+		{
+			gs.setMoveListPlayer2( Globals.moves.Left.toString() );
+		}
+		else if( sim2 == 3 )
+		{
+			gs.setMoveListPlayer2( Globals.moves.Right.toString() );
+		}
 
 	}
 
@@ -216,6 +248,10 @@ public class GameLandingPageController
 				gs.setGameState( x2, y2, Globals.currPositionPlayer2 );
 			}
 		}
+		gs.setCurrMove( currentMove + 1 );
+		gs.setCurrentMovePlayer1( movePlayer1.toUpperCase() );
+		gs.setCurrentMovePlayer2( movePlayer2.toUpperCase() );
+		gs.setMoveOver( true );
 	}
 
 	private boolean validateMove( String movePlayer, int x, int y )
@@ -248,5 +284,32 @@ public class GameLandingPageController
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	@SuppressWarnings( "unchecked" )
+	@RequestMapping( value = "/getCurrentGameState", method = RequestMethod.POST )
+	public void getCurrentGameState( HttpServletRequest request, HttpServletResponse response, ModelMap model ) throws ServletException, IOException
+	{
+		JSONObject jo = new JSONObject();
+		jo.put( "player1currentmove", gs.getCurrentMovePlayer1() );
+		jo.put( "player2currentmove", gs.getCurrentMovePlayer2() );
+		jo.put( "isMoveOver", gs.isMoveOver() );
+		jo.put( "isGameOver", gs.isGameOver() );
+		if( gs.isGameOver() )
+		{
+			jo.put( "winner", gs.getWinner() );
+		}
+		if( gs.isMoveOver() )
+		{
+			gs.setMoveOver( false );
+		}
+		StringWriter out = new StringWriter();
+		JSONValue.writeJSONString( jo, out );
+		String jsonText = out.toString();
+		response.setContentType( "text/plain" );
+		response.setHeader( "Content-Type", "application/x-www-form-urlencoded" );
+		response.setHeader( "Cache-Control", "no-cache" );
+		response.setHeader( "Pragma", "no-cache" );
+		response.getWriter().write( jsonText );
 	}
 }

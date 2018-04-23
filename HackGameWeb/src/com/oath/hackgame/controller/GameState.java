@@ -10,6 +10,39 @@ public class GameState
 	private HashMap< Integer, String > moveListPlayer2 = new HashMap< Integer, String >();
 	private int currMove = 0;
 	private int winner = -1;
+	private String currentMovePlayer1;
+	private String currentMovePlayer2;
+	private boolean isMoveOver = false;
+
+	public boolean isMoveOver()
+	{
+		return isMoveOver;
+	}
+
+	public void setMoveOver( boolean isMoveOver )
+	{
+		this.isMoveOver = isMoveOver;
+	}
+
+	public String getCurrentMovePlayer1()
+	{
+		return currentMovePlayer1;
+	}
+
+	public void setCurrentMovePlayer1( String currentMovePlayer1 )
+	{
+		this.currentMovePlayer1 = currentMovePlayer1;
+	}
+
+	public String getCurrentMovePlayer2()
+	{
+		return currentMovePlayer2;
+	}
+
+	public void setCurrentMovePlayer2( String currentMovePlayer2 )
+	{
+		this.currentMovePlayer2 = currentMovePlayer2;
+	}
 
 	public int getWinner()
 	{
@@ -62,9 +95,9 @@ public class GameState
 		return moveListPlayer1;
 	}
 
-	public void setMoveListPlayer1( HashMap< Integer, String > moveListPlayer1 )
+	public void setMoveListPlayer1( String move )
 	{
-		this.moveListPlayer1 = moveListPlayer1;
+		this.moveListPlayer1.put( this.currMove, move );
 	}
 
 	public HashMap< Integer, String > getMoveListPlayer2()
@@ -72,9 +105,9 @@ public class GameState
 		return moveListPlayer2;
 	}
 
-	public void setMoveListPlayer2( HashMap< Integer, String > moveListPlayer2 )
+	public void setMoveListPlayer2( String move )
 	{
-		this.moveListPlayer2 = moveListPlayer2;
+		this.moveListPlayer2.put( this.currMove, move );
 	}
 
 	public boolean isGameOver()
