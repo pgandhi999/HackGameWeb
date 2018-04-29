@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.servlet.RequestScoped;
+import com.oath.common.snakewars.board.MoveType;
 import com.oath.common.snakewars.settings.GameSettings;
 import com.oath.common.snakewars.settings.GameUpdate;
-import com.oath.snakewars.common.EngineRequest;
+import com.oath.snakewars.bot.BotHandler;
 import com.oath.snakewars.utils.SettingsProvider;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,8 +70,9 @@ public class GameResource
   @GET
   @Path("/move")
   @Produces(MediaType.TEXT_PLAIN)
-  public String sendNextMove() {
-    return "Move type";
+  public MoveType sendNextMove() {
+    BotHandler botHandler = new BotHandler();
+    return botHandler.fetchNextMove();
   }
 
 }

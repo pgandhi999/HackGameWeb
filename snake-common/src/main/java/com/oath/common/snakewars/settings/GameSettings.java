@@ -7,20 +7,26 @@ import java.util.List;
 
 public class GameSettings
 {
-  private DateTime timeBank;
-  private final DateTime timePerMove;
+  private int timeBank;
+  private final int timePerMove;
+  private final int maxTimeBank;
   private final List<String> playerNames;
   private final String selfBotName;
   private final int botId;
   private final GameBoard gameBoard;
-  public DateTime getTimeBank()
+  public int getTimeBank()
   {
     return timeBank;
   }
 
-  public DateTime getTimePerMove()
+  public int getTimePerMove()
   {
     return timePerMove;
+  }
+
+  public int getMaxTimeBank()
+  {
+    return maxTimeBank;
   }
 
   public List<String> getPlayerNames()
@@ -43,14 +49,15 @@ public class GameSettings
     return gameBoard;
   }
   // To be performed only by daemon that handles update requests in PlayerService
-  public void setTimeBank(DateTime timeBank)
+  public void setTimeBank(int timeBank)
   {
     this.timeBank = timeBank;
   }
 
   public GameSettings(
-      DateTime timeBank,
-      DateTime timePerMove,
+      int timeBank,
+      int timePerMove,
+      int maxTimeBank,
       List<String> playerNames,
       String selfBotName,
       int botId,
@@ -60,6 +67,7 @@ public class GameSettings
   {
     this.timeBank = timeBank;
     this.timePerMove = timePerMove;
+    this.maxTimeBank = maxTimeBank;
     this.playerNames = new ArrayList<String>(playerNames);
     this.selfBotName = selfBotName;
     this.botId = botId;
