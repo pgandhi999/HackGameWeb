@@ -178,6 +178,7 @@ public class GameLandingPageController
 		}
 		player1loses = validateMove( movePlayer1, x1, y1 );
 		player2loses = validateMove( movePlayer2, x2, y2 );
+		System.out.println( "Hereeeeeeeee 2 "+player1loses+" : "+player2loses );
 		if( player1loses && player2loses )
 		{
 			gs.setWinner( 0 );
@@ -201,36 +202,36 @@ public class GameLandingPageController
 			int y20 = y2;
 			if( movePlayer1.equalsIgnoreCase( Globals.moves.Up.toString() ) )
 			{
-				y1++;
+				x1--;
 			}
 			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Down.toString() ) )
 			{
-				y1--;
+				x1++;
 			}
 			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Left.toString() ) )
 			{
-				x1--;
+				y1--;
 			}
 			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Right.toString() ) )
 			{
-				x1++;
+				y1++;
 			}
 
 			if( movePlayer2.equalsIgnoreCase( Globals.moves.Up.toString() ) )
 			{
-				y2++;
+				x2--;
 			}
 			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Down.toString() ) )
 			{
-				y2--;
+				x2++;
 			}
 			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Left.toString() ) )
 			{
-				x2--;
+				y2--;
 			}
 			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Right.toString() ) )
 			{
-				x2++;
+				y2++;
 			}
 
 			if( x1 == x2 && y1 == y2 )
@@ -256,24 +257,24 @@ public class GameLandingPageController
 
 	private boolean validateMove( String movePlayer, int x, int y )
 	{
-		if( ( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && y + 1 > 15 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && y - 1 < 0 )
-				|| ( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && x - 1 < 0 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && x + 1 > 15 ) )
+		if( ( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && x - 1 < 0 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && x + 1 > 15 )
+				|| ( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && y - 1 < 0 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && y + 1 > 15 ) )
 		{
 			return true;
 		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getGameState( x, y + 1 ) == Globals.wallCell )
+		if( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getGameState( x - 1, y ) == Globals.wallCell )
 		{
 			return true;
 		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && gs.getGameState( x, y - 1 ) == Globals.wallCell )
+		if( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && gs.getGameState( x + 1, y ) == Globals.wallCell )
 		{
 			return true;
 		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && gs.getGameState( x - 1, y ) == Globals.wallCell )
+		if( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && gs.getGameState( x, y - 1 ) == Globals.wallCell )
 		{
 			return true;
 		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && gs.getGameState( x + 1, y ) == Globals.wallCell )
+		if( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && gs.getGameState( x, y + 1 ) == Globals.wallCell )
 		{
 			return true;
 		}
