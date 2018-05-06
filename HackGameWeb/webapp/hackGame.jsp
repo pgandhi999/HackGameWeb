@@ -586,11 +586,12 @@
 
 
  <br>
- <button id="initbtn" type="button" onclick="initGame()">Init</button>
+ <button id="initbtn" class="initbtn" type="button" onclick="initGame()">Init</button>
   <br>
   <br>
- <button id="startbtn" type="button" onclick="startGame()">Start</button>
+ <button id="startbtn" class="startbtn" type="button" onclick="startGame()">Start</button>
   <br>
+  <img src="images/oath_logo.jpg" class="oath_image">
 <script src="js/hack_game.js"></script>
 </body>
 </html>
