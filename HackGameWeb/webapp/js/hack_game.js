@@ -6,6 +6,7 @@ var line2 = null;
 window.onload = function() {
     document.getElementById("player1line").style.visibility = "hidden";
     document.getElementById("player2line").style.visibility = "hidden";
+    clearGameState();
 };
 function initGame() {
 	var xhttp;
@@ -33,14 +34,14 @@ function initRender(player1x, player1y, player2x, player2y) {
     var player1ycoord = 80 + (60 * player1x);
     player1LineElem.setAttribute("x1", player1xcoord);
     player1LineElem.setAttribute("y1", player1ycoord);
-    player1LineElem.setAttribute("x2", player1xcoord + 3);
+    player1LineElem.setAttribute("x2", player1xcoord);
     player1LineElem.setAttribute("y2", player1ycoord);
     
     var player2xcoord = 80 + (60 * player2y);
     var player2ycoord = 80 + (60 * player2x);
     player2LineElem.setAttribute("x1", player2xcoord);
     player2LineElem.setAttribute("y1", player2ycoord);
-    player2LineElem.setAttribute("x2", player2xcoord + 3);
+    player2LineElem.setAttribute("x2", player2xcoord);
     player2LineElem.setAttribute("y2", player2ycoord);
     
     document.getElementById("player1line").style.visibility = "visible";
@@ -100,7 +101,7 @@ function render(player1move, player2move) {
 	var newLine1 = document.createElementNS("http://www.w3.org/2000/svg", 'line');
 	newLine1.setAttribute("x1", line1.getAttribute('x2'));
 	newLine1.setAttribute("y1", line1.getAttribute('y2'));
-	newLine1.setAttribute("x2", 1 + +line1.getAttribute('x2'));
+	newLine1.setAttribute("x2", line1.getAttribute('x2'));
 	newLine1.setAttribute("y2", line1.getAttribute('y2'));
 	newLine1.setAttribute("stroke-width", "5");
 	newLine1.setAttribute("stroke", "red");
@@ -109,7 +110,7 @@ function render(player1move, player2move) {
 	var newLine2 = document.createElementNS("http://www.w3.org/2000/svg", 'line');
 	newLine2.setAttribute("x1", line2.getAttribute('x2'));
 	newLine2.setAttribute("y1", line2.getAttribute('y2'));
-	newLine2.setAttribute("x2", 1 + +line2.getAttribute('x2'));
+	newLine2.setAttribute("x2", line2.getAttribute('x2'));
 	newLine2.setAttribute("y2", line2.getAttribute('y2'));
 	newLine2.setAttribute("stroke-width", "5");
 	newLine2.setAttribute("stroke", "blue");
@@ -141,4 +142,16 @@ function render(player1move, player2move) {
 	}, 20);
 	line1 = newLine1;
 	line2 = newLine2;
+}
+
+function clearGameState() {
+	var xhttp;
+ 	xhttp=new XMLHttpRequest();
+ 	xhttp.onreadystatechange = function() {
+ 	    if (xhttp.readyState == 4 && xhttp.status == 200) {
+ 	    }
+ 	}
+ 	xhttp.open("POST", "/"+servletName+"/clearGameState", true);
+ 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+ 	xhttp.send();
 }

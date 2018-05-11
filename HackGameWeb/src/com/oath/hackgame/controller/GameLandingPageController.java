@@ -82,248 +82,288 @@ public class GameLandingPageController
 	@RequestMapping( value = "/startGame", method = RequestMethod.POST )
 	public void startGame( HttpServletRequest request, HttpServletResponse response, ModelMap model ) throws ServletException, IOException
 	{
-		while( !gs.isGameOver() )
+		try
 		{
-			// sendGameStateToPlayers( gs.getCurrMove() );
-			simulateGame();
-			try
+			while( !gs.isGameOver() )
 			{
-				Thread.sleep( 4000 );
+				// sendGameStateToPlayers( gs.getCurrMove() );
+				simulateGame();
+				try
+				{
+					Thread.sleep( 4000 );
+				}
+				catch( InterruptedException e )
+				{
+					e.printStackTrace();
+				}
+				validatePlayerMovesAndUpdateGameState();
 			}
-			catch( InterruptedException e )
-			{
-				e.printStackTrace();
-			}
-			validatePlayerMovesAndUpdateGameState();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
 		}
 	}
 
 	private void simulateGame()
 	{
-		int sim1 = ThreadLocalRandom.current().nextInt( 0, 4 );
-		int sim2 = ThreadLocalRandom.current().nextInt( 0, 4 );
-		if( sim1 == 0 )
+		try
 		{
-			gs.setMoveListPlayer1( Globals.moves.Up.toString() );
-		}
-		else if( sim1 == 1 )
-		{
-			gs.setMoveListPlayer1( Globals.moves.Down.toString() );
-		}
-		else if( sim1 == 2 )
-		{
-			gs.setMoveListPlayer1( Globals.moves.Left.toString() );
-		}
-		else if( sim1 == 3 )
-		{
-			gs.setMoveListPlayer1( Globals.moves.Right.toString() );
-		}
+			int sim1 = ThreadLocalRandom.current().nextInt( 0, 4 );
+			int sim2 = ThreadLocalRandom.current().nextInt( 0, 4 );
+			if( sim1 == 0 )
+			{
+				gs.setMoveListPlayer1( Globals.moves.Up.toString() );
+			}
+			else if( sim1 == 1 )
+			{
+				gs.setMoveListPlayer1( Globals.moves.Down.toString() );
+			}
+			else if( sim1 == 2 )
+			{
+				gs.setMoveListPlayer1( Globals.moves.Left.toString() );
+			}
+			else if( sim1 == 3 )
+			{
+				gs.setMoveListPlayer1( Globals.moves.Right.toString() );
+			}
 
-		if( sim2 == 0 )
-		{
-			gs.setMoveListPlayer2( Globals.moves.Up.toString() );
+			if( sim2 == 0 )
+			{
+				gs.setMoveListPlayer2( Globals.moves.Up.toString() );
+			}
+			else if( sim2 == 1 )
+			{
+				gs.setMoveListPlayer2( Globals.moves.Down.toString() );
+			}
+			else if( sim2 == 2 )
+			{
+				gs.setMoveListPlayer2( Globals.moves.Left.toString() );
+			}
+			else if( sim2 == 3 )
+			{
+				gs.setMoveListPlayer2( Globals.moves.Right.toString() );
+			}
 		}
-		else if( sim2 == 1 )
+		catch( Exception e )
 		{
-			gs.setMoveListPlayer2( Globals.moves.Down.toString() );
-		}
-		else if( sim2 == 2 )
-		{
-			gs.setMoveListPlayer2( Globals.moves.Left.toString() );
-		}
-		else if( sim2 == 3 )
-		{
-			gs.setMoveListPlayer2( Globals.moves.Right.toString() );
+			e.printStackTrace();
 		}
 
 	}
 
 	private void validatePlayerMovesAndUpdateGameState()
 	{
-		int currentMove = gs.getCurrMove();
-		String movePlayer1 = gs.getMoveListPlayer1().get( currentMove );
-		String movePlayer2 = gs.getMoveListPlayer2().get( currentMove );
-		if( movePlayer1 == null )
+		try
 		{
-			movePlayer1 = currentMove != 0 ? gs.getMoveListPlayer1().get( currentMove - 1 ) : Globals.moves.Up.toString();
-			gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
-		}
-		if( movePlayer2 == null )
-		{
-			movePlayer2 = currentMove != 0 ? gs.getMoveListPlayer2().get( currentMove - 1 ) : Globals.moves.Up.toString();
-			gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
-		}
-		System.out.println( "hereeeeeeee 1 " + movePlayer1 + " " + movePlayer2 );
-		if( currentMove > 0 )
-		{
-			if( movePlayer1.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Down.toString() ) )
+			int currentMove = gs.getCurrMove();
+			String movePlayer1 = gs.getMoveListPlayer1().get( currentMove );
+			String movePlayer2 = gs.getMoveListPlayer2().get( currentMove );
+			if( movePlayer1 == null )
 			{
-				movePlayer1 = Globals.moves.Down.toString();
+				movePlayer1 = currentMove != 0 ? gs.getMoveListPlayer1().get( currentMove - 1 ) : Globals.moves.Up.toString();
 				gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
 			}
-			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Down.toString() ) && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
+			if( movePlayer2 == null )
 			{
-				movePlayer1 = Globals.moves.Up.toString();
-				gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
-			}
-			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Left.toString() ) && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
-			{
-				movePlayer1 = Globals.moves.Right.toString();
-				gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
-			}
-			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Right.toString() ) && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
-			{
-				movePlayer1 = Globals.moves.Left.toString();
-				gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
-			}
-
-			if( movePlayer2.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Down.toString() ) )
-			{
-				movePlayer2 = Globals.moves.Down.toString();
+				movePlayer2 = currentMove != 0 ? gs.getMoveListPlayer2().get( currentMove - 1 ) : Globals.moves.Up.toString();
 				gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
 			}
-			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Down.toString() ) && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
+			System.out.println( "hereeeeeeee 1 " + movePlayer1 + " " + movePlayer2 );
+			if( currentMove > 0 )
 			{
-				movePlayer2 = Globals.moves.Up.toString();
-				gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
-			}
-			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Left.toString() ) && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
-			{
-				movePlayer2 = Globals.moves.Right.toString();
-				gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
-			}
-			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Right.toString() ) && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
-			{
-				movePlayer2 = Globals.moves.Left.toString();
-				gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
-			}
-		}
-		boolean player1loses = false;
-		boolean player2loses = false;
-		int arrayLength = gs.getGameStateArray().length;
-		int x1 = 0;
-		int y1 = 0;
-		int x2 = 0;
-		int y2 = 0;
-		for( int i = 0; i < arrayLength; i++ )
-		{
-			for( int j = 0; j < arrayLength; j++ )
-			{
-				if( gs.getGameState( i, j ) == Globals.currPositionPlayer1 )
+				if( movePlayer1.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Down.toString() ) )
 				{
-					x1 = i;
-					y1 = j;
+					movePlayer1 = Globals.moves.Down.toString();
+					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
 				}
-				else if( gs.getGameState( i, j ) == Globals.currPositionPlayer2 )
+				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Down.toString() )
+						&& gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
 				{
-					x2 = i;
-					y2 = j;
+					movePlayer1 = Globals.moves.Up.toString();
+					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
+				}
+				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Left.toString() )
+						&& gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
+				{
+					movePlayer1 = Globals.moves.Right.toString();
+					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
+				}
+				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Right.toString() )
+						&& gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
+				{
+					movePlayer1 = Globals.moves.Left.toString();
+					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
+				}
+
+				if( movePlayer2.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Down.toString() ) )
+				{
+					movePlayer2 = Globals.moves.Down.toString();
+					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
+				}
+				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Down.toString() )
+						&& gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
+				{
+					movePlayer2 = Globals.moves.Up.toString();
+					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
+				}
+				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Left.toString() )
+						&& gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
+				{
+					movePlayer2 = Globals.moves.Right.toString();
+					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
+				}
+				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Right.toString() )
+						&& gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
+				{
+					movePlayer2 = Globals.moves.Left.toString();
+					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
 				}
 			}
-		}
-		player1loses = validateMove( movePlayer1, x1, y1 );
-		player2loses = validateMove( movePlayer2, x2, y2 );
-		System.out.println( "Hereeeeeeeee 2 " + player1loses + " : " + player2loses );
-		if( player1loses && player2loses )
-		{
-			gs.setWinner( 0 );
-			gs.setGameOver( true );
-		}
-		else if( player1loses )
-		{
-			gs.setWinner( 2 );
-			gs.setGameOver( true );
-		}
-		else if( player2loses )
-		{
-			gs.setWinner( 1 );
-			gs.setGameOver( true );
-		}
-		else
-		{
-			int x10 = x1;
-			int y10 = y1;
-			int x20 = x2;
-			int y20 = y2;
-			if( movePlayer1.equalsIgnoreCase( Globals.moves.Up.toString() ) )
+			boolean player1loses = false;
+			boolean player2loses = false;
+			int arrayLength = gs.getGameStateArray().length;
+			int x1 = 0;
+			int y1 = 0;
+			int x2 = 0;
+			int y2 = 0;
+			for( int i = 0; i < arrayLength; i++ )
 			{
-				x1--;
+				for( int j = 0; j < arrayLength; j++ )
+				{
+					if( gs.getGameState( i, j ) == Globals.currPositionPlayer1 )
+					{
+						x1 = i;
+						y1 = j;
+					}
+					else if( gs.getGameState( i, j ) == Globals.currPositionPlayer2 )
+					{
+						x2 = i;
+						y2 = j;
+					}
+				}
 			}
-			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Down.toString() ) )
+			player1loses = validateMove( movePlayer1, x1, y1 );
+			player2loses = validateMove( movePlayer2, x2, y2 );
+			System.out.println( "Hereeeeeeeee 2 " + player1loses + " : " + player2loses );
+			if( player1loses && player2loses )
 			{
-				x1++;
-			}
-			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Left.toString() ) )
-			{
-				y1--;
-			}
-			else if( movePlayer1.equalsIgnoreCase( Globals.moves.Right.toString() ) )
-			{
-				y1++;
-			}
-
-			if( movePlayer2.equalsIgnoreCase( Globals.moves.Up.toString() ) )
-			{
-				x2--;
-			}
-			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Down.toString() ) )
-			{
-				x2++;
-			}
-			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Left.toString() ) )
-			{
-				y2--;
-			}
-			else if( movePlayer2.equalsIgnoreCase( Globals.moves.Right.toString() ) )
-			{
-				y2++;
-			}
-
-			if( x1 == x2 && y1 == y2 )
-			{
-				player1loses = true;
-				player2loses = true;
 				gs.setWinner( 0 );
+				gs.setGameOver( true );
+			}
+			else if( player1loses )
+			{
+				gs.setWinner( 2 );
+				gs.setGameOver( true );
+			}
+			else if( player2loses )
+			{
+				gs.setWinner( 1 );
 				gs.setGameOver( true );
 			}
 			else
 			{
-				gs.setGameState( x10, y10, Globals.wallCell );
-				gs.setGameState( x1, y1, Globals.currPositionPlayer1 );
-				gs.setGameState( x20, y20, Globals.wallCell );
-				gs.setGameState( x2, y2, Globals.currPositionPlayer2 );
+				int x10 = x1;
+				int y10 = y1;
+				int x20 = x2;
+				int y20 = y2;
+				if( movePlayer1.equalsIgnoreCase( Globals.moves.Up.toString() ) )
+				{
+					x1--;
+				}
+				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Down.toString() ) )
+				{
+					x1++;
+				}
+				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Left.toString() ) )
+				{
+					y1--;
+				}
+				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Right.toString() ) )
+				{
+					y1++;
+				}
+
+				if( movePlayer2.equalsIgnoreCase( Globals.moves.Up.toString() ) )
+				{
+					x2--;
+				}
+				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Down.toString() ) )
+				{
+					x2++;
+				}
+				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Left.toString() ) )
+				{
+					y2--;
+				}
+				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Right.toString() ) )
+				{
+					y2++;
+				}
+
+				if( x1 == x2 && y1 == y2 )
+				{
+					player1loses = true;
+					player2loses = true;
+					gs.setWinner( 0 );
+					gs.setGameOver( true );
+				}
+				else
+				{
+					gs.setGameState( x10, y10, Globals.wallCell );
+					gs.setGameState( x1, y1, Globals.currPositionPlayer1 );
+					gs.setGameState( x20, y20, Globals.wallCell );
+					gs.setGameState( x2, y2, Globals.currPositionPlayer2 );
+				}
 			}
+			gs.setCurrMove( currentMove + 1 );
+			gs.setCurrentMovePlayer1( movePlayer1.toUpperCase() );
+			gs.setCurrentMovePlayer2( movePlayer2.toUpperCase() );
+			gs.setMoveOver( true );
 		}
-		gs.setCurrMove( currentMove + 1 );
-		gs.setCurrentMovePlayer1( movePlayer1.toUpperCase() );
-		gs.setCurrentMovePlayer2( movePlayer2.toUpperCase() );
-		gs.setMoveOver( true );
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private boolean validateMove( String movePlayer, int x, int y )
 	{
-		if( ( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && x - 1 < 0 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && x + 1 > 15 )
-				|| ( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && y - 1 < 0 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && y + 1 > 15 ) )
+		try
 		{
-			return true;
+			if( ( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && x - 1 < 0 ) || ( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && x + 1 > 15 )
+					|| ( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && y - 1 < 0 )
+					|| ( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && y + 1 > 15 ) )
+			{
+				return true;
+			}
+			if( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && ( gs.getGameState( x - 1, y ) == Globals.wallCell
+					|| gs.getGameState( x - 1, y ) == Globals.currPositionPlayer1 || gs.getGameState( x - 1, y ) == Globals.currPositionPlayer2 ) )
+			{
+				return true;
+			}
+			if( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && ( gs.getGameState( x + 1, y ) == Globals.wallCell
+					|| gs.getGameState( x + 1, y ) == Globals.currPositionPlayer1 || gs.getGameState( x + 1, y ) == Globals.currPositionPlayer2 ) )
+			{
+				return true;
+			}
+			if( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && ( gs.getGameState( x, y - 1 ) == Globals.wallCell
+					|| gs.getGameState( x, y - 1 ) == Globals.currPositionPlayer1 || gs.getGameState( x, y - 1 ) == Globals.currPositionPlayer2 ) )
+			{
+				return true;
+			}
+			if( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && ( gs.getGameState( x, y + 1 ) == Globals.wallCell
+					|| gs.getGameState( x, y + 1 ) == Globals.currPositionPlayer1 || gs.getGameState( x, y + 1 ) == Globals.currPositionPlayer2 ) )
+			{
+				return true;
+			}
+			return false;
 		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && gs.getGameState( x - 1, y ) == Globals.wallCell )
+		catch( Exception e )
 		{
-			return true;
+			e.printStackTrace();
+			return false;
 		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && gs.getGameState( x + 1, y ) == Globals.wallCell )
-		{
-			return true;
-		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && gs.getGameState( x, y - 1 ) == Globals.wallCell )
-		{
-			return true;
-		}
-		if( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && gs.getGameState( x, y + 1 ) == Globals.wallCell )
-		{
-			return true;
-		}
-		return false;
 	}
 
 	private void sendGameStateToPlayers( int currMove )
@@ -336,26 +376,45 @@ public class GameLandingPageController
 	@RequestMapping( value = "/getCurrentGameState", method = RequestMethod.POST )
 	public void getCurrentGameState( HttpServletRequest request, HttpServletResponse response, ModelMap model ) throws ServletException, IOException
 	{
-		JSONObject jo = new JSONObject();
-		jo.put( "player1currentmove", gs.getCurrentMovePlayer1() );
-		jo.put( "player2currentmove", gs.getCurrentMovePlayer2() );
-		jo.put( "isMoveOver", gs.isMoveOver() );
-		jo.put( "isGameOver", gs.isGameOver() );
-		if( gs.isGameOver() )
+		try
 		{
-			jo.put( "winner", gs.getWinner() );
+			JSONObject jo = new JSONObject();
+			jo.put( "player1currentmove", gs.getCurrentMovePlayer1() );
+			jo.put( "player2currentmove", gs.getCurrentMovePlayer2() );
+			jo.put( "isMoveOver", gs.isMoveOver() );
+			jo.put( "isGameOver", gs.isGameOver() );
+			if( gs.isGameOver() )
+			{
+				jo.put( "winner", gs.getWinner() );
+			}
+			if( gs.isMoveOver() )
+			{
+				gs.setMoveOver( false );
+			}
+			StringWriter out = new StringWriter();
+			JSONValue.writeJSONString( jo, out );
+			String jsonText = out.toString();
+			response.setContentType( "text/plain" );
+			response.setHeader( "Content-Type", "application/x-www-form-urlencoded" );
+			response.setHeader( "Cache-Control", "no-cache" );
+			response.setHeader( "Pragma", "no-cache" );
+			response.getWriter().write( jsonText );
 		}
-		if( gs.isMoveOver() )
+		catch( Exception e )
 		{
-			gs.setMoveOver( false );
+			e.printStackTrace();
 		}
-		StringWriter out = new StringWriter();
-		JSONValue.writeJSONString( jo, out );
-		String jsonText = out.toString();
+	}
+
+	@RequestMapping( value = "/clearGameState", method = RequestMethod.POST )
+	public void clearGameState( HttpServletRequest request, HttpServletResponse response, ModelMap model ) throws ServletException, IOException
+	{
+		player1 = null;
+		player2 = null;
+		gs = null;
 		response.setContentType( "text/plain" );
 		response.setHeader( "Content-Type", "application/x-www-form-urlencoded" );
 		response.setHeader( "Cache-Control", "no-cache" );
 		response.setHeader( "Pragma", "no-cache" );
-		response.getWriter().write( jsonText );
 	}
 }

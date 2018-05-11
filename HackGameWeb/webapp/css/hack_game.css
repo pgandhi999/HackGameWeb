@@ -1,38 +1,5 @@
 @CHARSET "UTF-8";
 
-.div1
-{
-	margin-left:0px; 
-	margin-top: 0px;
-	width: 45px;
-	height: 5px;
-    background-color: #ffffff;
-    display: table-row;
-    padding: 5px;
-}
-
-.div2
-{
-	width: 2px;
-	border: 1px solid black;
-	background-color: #ffffff;
-	height: 3px;
-	display: inline-block;
-    margin-top: -10px;
-	margin-right: -10px;   /* Negative sign removes the gap*/
-	padding: 25px; 
-	text-align: center;
-	font-weight: bold;
-}
-
-.container
-{
-    margin-top: 50px;
-    margin-left: 100px;
-    display: table; 
-
-}
-
 h1
 {
     color:#4084E8;
