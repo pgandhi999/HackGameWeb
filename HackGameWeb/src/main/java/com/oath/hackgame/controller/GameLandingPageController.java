@@ -2,12 +2,14 @@ package com.oath.hackgame.controller;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -23,6 +25,11 @@ public class GameLandingPageController
 	public PlayerInfo player1 = null;
 	public PlayerInfo player2 = null;
 	public GameState gs = null;
+	private final ObjectMapper objectMapper;
+
+	public GameLandingPageController() {
+		objectMapper = new ObjectMapper();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	@RequestMapping( value = "/getInitGameState", method = RequestMethod.POST )
@@ -44,27 +51,41 @@ public class GameLandingPageController
 			}
 			gs.setGameState( initPlayer2PosX, initPlayer2PosY, Globals.currPositionPlayer2 );
 			initializePlayerClient();
-			JSONArray ja = new JSONArray();
+			//TODO Try if this works
+			HashMap<String,Object> playerProps = new HashMap<String, Object>();
+
+			/*JSONArray ja = new JSONArray();
 			JSONObject jo = new JSONObject();
+			*/
 			/*
 			 * jo.put( "player1name", player1.getPlayerName() );
 			 * jo.put( "player2name", player2.getPlayerName() );
 			 */
-			jo.put( "player1name", "Parth" );
+
+			/*jo.put( "player1name", "Parth" );
 			jo.put( "player2name", "Sunny" );
 			jo.put( "player1x", initPlayer1PosX );
 			jo.put( "player1y", initPlayer1PosY );
 			jo.put( "player2x", initPlayer2PosX );
 			jo.put( "player2y", initPlayer2PosY );
 			ja.add( jo );
+			*/
+			playerProps.put( "player1name", "Parth" );
+			playerProps.put( "player2name", "Sunny" );
+			playerProps.put( "player1x", initPlayer1PosX );
+			playerProps.put( "player1y", initPlayer1PosY );
+			playerProps.put( "player2x", initPlayer2PosX );
+			playerProps.put( "player2y", initPlayer2PosY );
 			StringWriter out = new StringWriter();
-			JSONValue.writeJSONString( ja, out );
+			/* JSONValue.writeJSONString( ja, out ); */
 			String jsonText = out.toString();
 			response.setContentType( "text/plain" );
 			response.setHeader( "Content-Type", "application/x-www-form-urlencoded" );
 			response.setHeader( "Cache-Control", "no-cache" );
 			response.setHeader( "Pragma", "no-cache" );
-			response.getWriter().write( jsonText );
+			/*response.getWriter().write( jsonText ); */
+			response.getWriter().write(objectMapper.writeValueAsString(playerProps));
+
 		}
 		catch( Exception e )
 		{
@@ -178,19 +199,19 @@ public class GameLandingPageController
 					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
 				}
 				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Down.toString() )
-						&& gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
+								 && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
 				{
 					movePlayer1 = Globals.moves.Up.toString();
 					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
 				}
 				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Left.toString() )
-						&& gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
+								 && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
 				{
 					movePlayer1 = Globals.moves.Right.toString();
 					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
 				}
 				else if( movePlayer1.equalsIgnoreCase( Globals.moves.Right.toString() )
-						&& gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
+								 && gs.getMoveListPlayer1().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
 				{
 					movePlayer1 = Globals.moves.Left.toString();
 					gs.getMoveListPlayer1().put( currentMove, movePlayer1 );
@@ -202,19 +223,19 @@ public class GameLandingPageController
 					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
 				}
 				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Down.toString() )
-						&& gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
+								 && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Up.toString() ) )
 				{
 					movePlayer2 = Globals.moves.Up.toString();
 					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
 				}
 				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Left.toString() )
-						&& gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
+								 && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Right.toString() ) )
 				{
 					movePlayer2 = Globals.moves.Right.toString();
 					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
 				}
 				else if( movePlayer2.equalsIgnoreCase( Globals.moves.Right.toString() )
-						&& gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
+								 && gs.getMoveListPlayer2().get( currentMove - 1 ).equalsIgnoreCase( Globals.moves.Left.toString() ) )
 				{
 					movePlayer2 = Globals.moves.Left.toString();
 					gs.getMoveListPlayer2().put( currentMove, movePlayer2 );
@@ -338,22 +359,22 @@ public class GameLandingPageController
 				return true;
 			}
 			if( movePlayer.equalsIgnoreCase( Globals.moves.Up.toString() ) && ( gs.getGameState( x - 1, y ) == Globals.wallCell
-					|| gs.getGameState( x - 1, y ) == Globals.currPositionPlayer1 || gs.getGameState( x - 1, y ) == Globals.currPositionPlayer2 ) )
+																																					|| gs.getGameState( x - 1, y ) == Globals.currPositionPlayer1 || gs.getGameState( x - 1, y ) == Globals.currPositionPlayer2 ) )
 			{
 				return true;
 			}
 			if( movePlayer.equalsIgnoreCase( Globals.moves.Down.toString() ) && ( gs.getGameState( x + 1, y ) == Globals.wallCell
-					|| gs.getGameState( x + 1, y ) == Globals.currPositionPlayer1 || gs.getGameState( x + 1, y ) == Globals.currPositionPlayer2 ) )
+																																						|| gs.getGameState( x + 1, y ) == Globals.currPositionPlayer1 || gs.getGameState( x + 1, y ) == Globals.currPositionPlayer2 ) )
 			{
 				return true;
 			}
 			if( movePlayer.equalsIgnoreCase( Globals.moves.Left.toString() ) && ( gs.getGameState( x, y - 1 ) == Globals.wallCell
-					|| gs.getGameState( x, y - 1 ) == Globals.currPositionPlayer1 || gs.getGameState( x, y - 1 ) == Globals.currPositionPlayer2 ) )
+																																						|| gs.getGameState( x, y - 1 ) == Globals.currPositionPlayer1 || gs.getGameState( x, y - 1 ) == Globals.currPositionPlayer2 ) )
 			{
 				return true;
 			}
 			if( movePlayer.equalsIgnoreCase( Globals.moves.Right.toString() ) && ( gs.getGameState( x, y + 1 ) == Globals.wallCell
-					|| gs.getGameState( x, y + 1 ) == Globals.currPositionPlayer1 || gs.getGameState( x, y + 1 ) == Globals.currPositionPlayer2 ) )
+																																						 || gs.getGameState( x, y + 1 ) == Globals.currPositionPlayer1 || gs.getGameState( x, y + 1 ) == Globals.currPositionPlayer2 ) )
 			{
 				return true;
 			}
@@ -378,27 +399,36 @@ public class GameLandingPageController
 	{
 		try
 		{
-			JSONObject jo = new JSONObject();
-			jo.put( "player1currentmove", gs.getCurrentMovePlayer1() );
+			//TODO: Check if this works for you
+			/*JSONObject jo = new JSONObject(); */
+			HashMap<String,Object> playerProps = new HashMap<String, Object>();
+			/* jo.put( "player1currentmove", gs.getCurrentMovePlayer1() );
 			jo.put( "player2currentmove", gs.getCurrentMovePlayer2() );
 			jo.put( "isMoveOver", gs.isMoveOver() );
 			jo.put( "isGameOver", gs.isGameOver() );
+			*/
+			playerProps.put( "player1currentmove", gs.getCurrentMovePlayer1() );
+			playerProps.put( "player2currentmove", gs.getCurrentMovePlayer2() );
+			playerProps.put( "isMoveOver", gs.isMoveOver() );
+			playerProps.put( "isGameOver", gs.isGameOver() );
 			if( gs.isGameOver() )
 			{
-				jo.put( "winner", gs.getWinner() );
+				playerProps.put( "winner", gs.getWinner() );
 			}
 			if( gs.isMoveOver() )
 			{
 				gs.setMoveOver( false );
 			}
-			StringWriter out = new StringWriter();
+			/*StringWriter out = new StringWriter();
 			JSONValue.writeJSONString( jo, out );
 			String jsonText = out.toString();
+			*/
 			response.setContentType( "text/plain" );
 			response.setHeader( "Content-Type", "application/x-www-form-urlencoded" );
 			response.setHeader( "Cache-Control", "no-cache" );
 			response.setHeader( "Pragma", "no-cache" );
-			response.getWriter().write( jsonText );
+			/*response.getWriter().write( jsonText ); */
+			response.getWriter().write( objectMapper.writeValueAsString(playerProps) );
 		}
 		catch( Exception e )
 		{
