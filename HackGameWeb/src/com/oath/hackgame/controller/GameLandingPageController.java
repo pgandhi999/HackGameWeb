@@ -25,16 +25,13 @@ public class GameLandingPageController
 	public PlayerInfo player1 = null;
 	public PlayerInfo player2 = null;
 	public GameState gs = null;
-	private final ObjectMapper objectMapper;
-
-	public GameLandingPageController() {
-		objectMapper = new ObjectMapper();
-	}
+	public ObjectMapper objectMapper = new ObjectMapper();
 
 	@SuppressWarnings( "unchecked" )
 	@RequestMapping( value = "/getInitGameState", method = RequestMethod.POST )
 	public void getInitGameState( HttpServletRequest request, HttpServletResponse response, ModelMap model ) throws ServletException, IOException
 	{
+		System.out.println( "hereeeeeeeeeeeeeeeee 1111" );
 		try
 		{
 			gs = new GameState();

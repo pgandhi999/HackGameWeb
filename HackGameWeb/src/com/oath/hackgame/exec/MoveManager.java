@@ -8,6 +8,7 @@ import com.oath.common.snakewars.settings.GameUpdate;
 import com.oath.hackgame.common.PlayerMove;
 import com.oath.hackgame.controller.GameState;
 import com.oath.hackgame.controller.PlayerInfo;
+
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
@@ -78,7 +79,7 @@ public class MoveManager
     try {
       StringEntity requestEntity = new StringEntity(
           objectMapper.writeValueAsString(gameUpdate),
-          ContentType.APPLICATION_JSON
+          ContentType.APPLICATION_JSON.toString()
       );
       httpPost.setEntity(requestEntity);
       CloseableHttpResponse httpResponse = httpClient.execute(httpPost);

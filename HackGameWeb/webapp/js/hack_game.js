@@ -22,6 +22,7 @@ function initGame() {
  	    	initRender(player1x, player1y, player2x, player2y);
  	    }
  	}
+ 	console.log("SSSSS "+servletName);
  	xhttp.open("POST", "/"+servletName+"/getInitGameState", true);
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
