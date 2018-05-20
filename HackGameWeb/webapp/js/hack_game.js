@@ -15,14 +15,17 @@ function initGame() {
  	    if (xhttp.readyState == 4 && xhttp.status == 200) {
  	    	console.log("hereeeeeee 0 "+xhttp.responseText);
  	    	var obj = JSON.parse(xhttp.responseText);
- 	    	var player1x = obj[0].player1x;
- 	    	var player1y = obj[0].player1y;
- 	    	var player2x = obj[0].player2x;
- 	    	var player2y = obj[0].player2y;
+ 	    	var player1x = obj.player1x;
+ 	    	var player1y = obj.player1y;
+ 	    	var player2x = obj.player2x;
+ 	    	var player2y = obj.player2y;
+ 	    	var player1name = obj.player1name;
+ 	    	var player2name = obj.player2name;
+ 	    	document.getElementById("player1name").innerHTML = player1name;
+ 	    	document.getElementById("player2name").innerHTML = player2name;
  	    	initRender(player1x, player1y, player2x, player2y);
  	    }
  	}
- 	console.log("SSSSS "+servletName);
  	xhttp.open("POST", "/"+servletName+"/getInitGameState", true);
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
@@ -35,14 +38,14 @@ function initRender(player1x, player1y, player2x, player2y) {
     var player1ycoord = 80 + (60 * player1x);
     player1LineElem.setAttribute("x1", player1xcoord);
     player1LineElem.setAttribute("y1", player1ycoord);
-    player1LineElem.setAttribute("x2", player1xcoord);
+    player1LineElem.setAttribute("x2", player1xcoord + 3);
     player1LineElem.setAttribute("y2", player1ycoord);
     
     var player2xcoord = 80 + (60 * player2y);
     var player2ycoord = 80 + (60 * player2x);
     player2LineElem.setAttribute("x1", player2xcoord);
     player2LineElem.setAttribute("y1", player2ycoord);
-    player2LineElem.setAttribute("x2", player2xcoord);
+    player2LineElem.setAttribute("x2", player2xcoord + 3);
     player2LineElem.setAttribute("y2", player2ycoord);
     
     document.getElementById("player1line").style.visibility = "visible";
@@ -63,7 +66,7 @@ function startGame() {
  	interval1 = window.setInterval(function() {
  		getCurrentState();
  		
- 	}, 2000);
+ 	}, 1000);
 }
 
 function getCurrentState() {
@@ -80,7 +83,9 @@ function getCurrentState() {
  	    		if (isGameOver) {
  	    			clearInterval(interval1);
  	    			var winner = obj.winner;
- 	    			alert("Player "+winner+" wins");
+ 	    			window.setTimeout(function() {
+ 	    			    declareWinner(winner);
+ 	    			}, 2000);
  	    		}
  	    	}
  	    }
@@ -88,6 +93,10 @@ function getCurrentState() {
  	xhttp.open("POST", "/"+servletName+"/getCurrentGameState", true);
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
+}
+
+function declareWinner(winner) {
+	alert("Player "+winner+" wins");
 }
 
 function render(player1move, player2move) {
@@ -138,7 +147,7 @@ function render(player1move, player2move) {
 		} else if (player2move.indexOf("RIGHT") != -1) {
 			newLine2.setAttribute('x2', 1 + +newLine2.getAttribute('x2'));
 		}
-	    if (count++ > 60)
+	    if (count++ > 59)
 	        window.clearInterval(interval);
 	}, 20);
 	line1 = newLine1;
@@ -155,4 +164,8 @@ function clearGameState() {
  	xhttp.open("POST", "/"+servletName+"/clearGameState", true);
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
+}
+
+function resetGame() {
+	window.location.reload();
 }

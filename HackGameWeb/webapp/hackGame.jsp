@@ -298,6 +298,12 @@
   <br>
  <button id="startbtn" class="startbtn" type="button" onclick="startGame()">Start</button>
   <br>
+  <br>
+ <button id="resetbtn" class="resetbtn" type="button" onclick="resetGame()">Reset</button>
+  <br>
+  <br>
+  <p class="player1name">Player 1: <p id="player1name" class="player1nameinner">Not Available</p></p>
+  <p class="player2name">Player 2: <p id="player2name" class="player2nameinner">Not Available</p></p>
   <img src="images/oath_logo.jpg" class="oath_image">
 <script src="js/hack_game.js"></script>
 </body>
