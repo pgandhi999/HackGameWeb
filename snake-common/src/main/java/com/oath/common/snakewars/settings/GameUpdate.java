@@ -1,5 +1,8 @@
 package com.oath.common.snakewars.settings;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class GameUpdate
 {
   private final int roundNumber;
@@ -15,7 +18,10 @@ public class GameUpdate
     return gameBoard;
   }
 
-  public GameUpdate(int roundNumber, GameBoard gameBoard)
+  @JsonCreator
+  public GameUpdate(
+      @JsonProperty("roundNumber") int roundNumber,
+      @JsonProperty("gameBoard") GameBoard gameBoard)
   {
     this.roundNumber = roundNumber;
     this.gameBoard = gameBoard;

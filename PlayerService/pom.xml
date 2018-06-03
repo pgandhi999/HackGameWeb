@@ -8,9 +8,121 @@
     <artifactId>PlayerService</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <jersey.version>1.19.3</jersey.version>
+        <jersey.version>1.14</jersey.version>
         <jetty.version>9.0.5.v20130815</jetty.version>
 </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>org.eclipse.jetty.orbit:javax.servlet</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/ECLIPSEF.RSA</exclude>
+                                        <exclude>META-INF/ECLIPSEF.SF</exclude>
+                                        <exclude>META-INF/eclipse.inf</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+           <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.oath.snakewars.main.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.oath.snakewars.main.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- <plugin>
+                 <artifactId>maven-assembly-plugin</artifactId>
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>single</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+                 <configuration>
+                     <archive>
+                         <manifest>
+                             <mainClass>com.oath.snakewars.main.Main</mainClass>
+                         </manifest>
+                     </archive>
+                     <descriptorRefs>
+                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                     </descriptorRefs>
+                 </configuration>
+             </plugin>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-assembly-plugin</artifactId>
+                  <configuration>
+                      <descriptorRefs>
+                          <descriptorRef>jar-with-dependencies</descriptorRef>
+                      </descriptorRefs>
+                      <archive>
+                          <manifest>
+                              <mainClass>com.oath.snakewars.main.Main</mainClass>
+                          </manifest>
+                      </archive>
+                  </configuration>
+                  <executions>
+                      <execution>
+                          <phase>package</phase>
+                          <goals>
+                              <goal>single</goal>
+                          </goals>
+                      </execution>
+                  </executions>
+              </plugin>-->
+        </plugins>
+    </build>
 <dependencies>
     <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
     <!--<dependency>
@@ -42,26 +154,51 @@
         <artifactId>guava</artifactId>
         <version>16.0.1</version>
     </dependency>
+
     <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
-        <version>4.1.0</version>
+        <version>3.0</version>
     </dependency>
     <dependency>
         <groupId>com.google.inject.extensions</groupId>
         <artifactId>guice-servlet</artifactId>
-        <version>4.1.0</version>
+        <version>3.0</version>
     </dependency>
     <dependency>
     <groupId>com.google.inject.extensions</groupId>
     <artifactId>guice-multibindings</artifactId>
-    <version>4.1.0</version>
+    <version>3.0</version>
     </dependency>
-    <dependency>
-        <groupId>com.sun.jersey.contribs</groupId>
-        <artifactId>jersey-guice</artifactId>
+     <dependency>
+         <groupId>com.sun.jersey.contribs</groupId>
+         <artifactId>jersey-guice</artifactId>
+         <version>${jersey.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-json</artifactId>
         <version>${jersey.version}</version>
     </dependency>
+    <dependency>
+         <groupId>com.sun.jersey</groupId>
+         <artifactId>jersey-server</artifactId>
+         <version>${jersey.version}</version>
+     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
+    <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-json-jackson</artifactId>
+        <version>2.25.1</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-bundle -->
+    <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-bundle</artifactId>
+        <version>${jersey.version}</version>
+    </dependency>
+
     <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
@@ -76,6 +213,11 @@
         <groupId>com.oath.common</groupId>
         <artifactId>snake-common</artifactId>
         <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
     </dependency>
 </dependencies>
 </project>

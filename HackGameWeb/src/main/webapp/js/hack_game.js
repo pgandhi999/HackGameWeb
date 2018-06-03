@@ -26,7 +26,9 @@ function initGame() {
  	    	initRender(player1x, player1y, player2x, player2y);
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/getInitGameState", true);
+ 	//xhttp.open("POST", "/"+servletName+"/game/getInitGameState", true);
+ 	 	xhttp.open("POST", "/"+"game/getInitGameState", true);
+
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
 }
@@ -60,7 +62,9 @@ function startGame() {
  	    	
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/startGame", true);
+ 	//xhttp.open("POST", "/"+servletName+"/game/startGame", true);
+ 	 	xhttp.open("POST", "/"+"game/startGame", true);
+
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
  	interval1 = window.setInterval(function() {
@@ -90,7 +94,9 @@ function getCurrentState() {
  	    	}
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/getCurrentGameState", true);
+ 	//xhttp.open("POST", "/"+servletName+"/game/getCurrentGameState", true);
+ 	 	xhttp.open("POST", "/"+"game/getCurrentGameState", true);
+
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
 }
@@ -161,7 +167,8 @@ function clearGameState() {
  	    if (xhttp.readyState == 4 && xhttp.status == 200) {
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/clearGameState", true);
+ //	xhttp.open("POST", "/"+servletName+"/game/clearGameState", true);
+  	xhttp.open("POST", "/"+"game/clearGameState", true);
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
 }
