@@ -13,7 +13,6 @@ function initGame() {
  	xhttp=new XMLHttpRequest();
  	xhttp.onreadystatechange = function() {
  	    if (xhttp.readyState == 4 && xhttp.status == 200) {
- 	    	console.log("hereeeeeee 0 "+xhttp.responseText);
  	    	var obj = JSON.parse(xhttp.responseText);
  	    	var player1x = obj.player1x;
  	    	var player1y = obj.player1y;
@@ -23,6 +22,7 @@ function initGame() {
  	    	var player2name = obj.player2name;
  	    	document.getElementById("player1name").innerHTML = player1name;
  	    	document.getElementById("player2name").innerHTML = player2name;
+ 	    	console.log("INIT GAME COORD "+player1x+" "+player1y+" "+player2x+" "+player2y);
  	    	initRender(player1x, player1y, player2x, player2y);
  	    }
  	}
@@ -70,7 +70,7 @@ function startGame() {
  	interval1 = window.setInterval(function() {
  		getCurrentState();
  		
- 	}, 1000);
+ 	}, 500);
 }
 
 function getCurrentState() {

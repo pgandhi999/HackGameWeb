@@ -2,12 +2,14 @@ package com.oath.common.snakewars.settings;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oath.common.snakewars.board.Cell;
 
 public class GameBoard
 {
   private final int boardWidth;
   private final int boardHeight;
   private final int board[][];
+  private Cell currentCell;
 
   @JsonCreator
   public GameBoard (
@@ -21,6 +23,7 @@ public class GameBoard
         board[i][j] = CellType.EMPTY;
       }
     }
+    currentCell = new Cell(0,0);
   }
   public int getBoardWidth() {
     return boardWidth;
@@ -30,8 +33,21 @@ public class GameBoard
     return boardHeight;
   }
 
-  public void updateGameBoard(int player1X, int player1Y, int player2X, int player2Y) {
-    board[player1X][player1Y] = CellType.PLAYER1;
-    board[player2X][player2Y] = CellType.PLAYER2;
+  public void updateGameBoard(Cell player1, Cell player2) {
+    board[player1.getX()][player1.getY()] = CellType.PLAYER1;
+    board[player2.getX()][player2.getY()] = CellType.PLAYER2;
+  }
+  public int getCellContent(int x, int y) {
+    return board[x][y];
+  }
+  public void setCellContent(int x, int y, int z) {
+    board[x][y] = z;
+  }
+  public Cell getCurrentCell()
+  {
+    return currentCell;
+  }
+  public void setCurrentCell(Cell currentCell) {
+    this.currentCell = currentCell;
   }
 }

@@ -14,14 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import com.oath.common.snakewars.settings.CellType;
 import com.oath.common.snakewars.settings.GameBoard;
 import com.oath.common.snakewars.settings.GameSettings;
 import com.oath.common.snakewars.settings.GameUpdate;
+import com.oath.common.snakewars.board.Cell;
 import com.oath.hackgame.common.PlayerMove;
 import com.oath.hackgame.common.StartValues;
 import com.oath.hackgame.exec.MoveManager;
-import javafx.scene.control.Cell;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +35,7 @@ public class GameLandingPageController
   public GameState gs = null;
   public ObjectMapper objectMapper = new ObjectMapper();
   public MoveManager moveManager = new MoveManager();
+  public static final Object lock = new Object();
 
   @RequestMapping(value = "/getInitGameState", method = RequestMethod.POST)
   public void getInitGameState(HttpServletRequest request, HttpServletResponse response, ModelMap model)
@@ -43,27 +43,34 @@ public class GameLandingPageController
   {
     try {
       gs = new GameState();
+      moveManager = new MoveManager();
       gs.initGameState();
       int initPlayer1PosX = ThreadLocalRandom.current().nextInt(0, 16);
       int initPlayer1PosY = ThreadLocalRandom.current().nextInt(0, 16);
+      Cell initPlayer1Pos = new Cell(initPlayer1PosX, initPlayer1PosY);
       //gs.setGameState(initPlayer1PosX, initPlayer1PosY, CellType.PLAYER1);
       int initPlayer2PosX = ThreadLocalRandom.current().nextInt(0, 16);
       int initPlayer2PosY = ThreadLocalRandom.current().nextInt(0, 16);
-      if (initPlayer1PosX == initPlayer2PosX && initPlayer1PosY == initPlayer2PosY) {
+      Cell initPlayer2Pos = new Cell(initPlayer2PosX,initPlayer2PosY);
+      if (initPlayer1Pos.getX() == initPlayer2Pos.getX() && initPlayer1Pos.getY() == initPlayer2Pos.getY()) {
         initPlayer2PosX = ThreadLocalRandom.current().nextInt(0, 16);
         initPlayer2PosY = ThreadLocalRandom.current().nextInt(0, 16);
+        initPlayer2Pos.setX(initPlayer2PosX);
+        initPlayer2Pos.setY(initPlayer2PosY);
       }
-      initializePlayerClient(initPlayer1PosX,initPlayer1PosY,initPlayer2PosX,initPlayer2PosY,gs);
+      List<String> playerNames = initializePlayerClient(initPlayer1Pos,initPlayer2Pos,gs);
       //gs.setGameState(initPlayer2PosX, initPlayer2PosY, CellType.PLAYER2);
-      gs.setWholeGameState(initPlayer1PosX,initPlayer1PosY,initPlayer2PosX,initPlayer2PosY);
+      System.out.println("Board value at "+initPlayer1PosX+" "+initPlayer1PosY+" before is"+gs.getGameBoard().getCellContent(initPlayer1PosX,initPlayer1PosY));
+      gs.setWholeGameState(initPlayer1Pos,initPlayer2Pos);
+      //System.out.println("Board value at x1 y1 after is"+gs.getGameBoard().getCellContent(initPlayer1PosX,initPlayer1PosY));
       // TODO Try if this works
       HashMap<String, Object> playerProps = new HashMap<String, Object>();
-      playerProps.put("player1name", "BC");
-      playerProps.put("player2name", "MC");
-      playerProps.put("player1x", initPlayer1PosX);
-      playerProps.put("player1y", initPlayer1PosY);
-      playerProps.put("player2x", initPlayer2PosX);
-      playerProps.put("player2y", initPlayer2PosY);
+      playerProps.put("player1name", playerNames.get(0));
+      playerProps.put("player2name", playerNames.get(1));
+      playerProps.put("player1x", initPlayer1Pos.getX());
+      playerProps.put("player1y", initPlayer1Pos.getY());
+      playerProps.put("player2x", initPlayer2Pos.getX());
+      playerProps.put("player2y", initPlayer2Pos.getY());
       response.setContentType("text/plain");
       response.setHeader("Content-Type", "application/x-www-form-urlencoded");
       response.setHeader("Cache-Control", "no-cache");
@@ -77,7 +84,7 @@ public class GameLandingPageController
 
   }
 
-  private void initializePlayerClient(int player1X, int player1Y, int player2X, int player2Y, GameState gs)
+  private List<String> initializePlayerClient(Cell player1, Cell player2, GameState gs)
   {
     GameSettings initialSettings = new GameSettings(StartValues.TIME_BANK, StartValues.TIME_PER_MOVE,
                                                     240, "Test",
@@ -85,20 +92,26 @@ public class GameLandingPageController
     );
     GameBoard initialBoard = initialSettings.getGameBoard();
     gs.setGameBoard(initialBoard);
-    initialBoard.updateGameBoard(player1X,player1Y,player2X,player2Y);
+    initialBoard.updateGameBoard(player1,player2);
     String completePlayer1Url = new StringBuffer(StartValues.SERVICE_URL1).append(StartValues.PLAYER_SERVICE_CONTEXT).toString();
     String completePlayer2Url = new StringBuffer(StartValues.SERVICE_URL2).append(StartValues.PLAYER_SERVICE_CONTEXT).toString();
+    Map<String,Cell> playerMoveMap = new HashMap<String, Cell>(2);
+    playerMoveMap.put(completePlayer1Url,player1);
+    playerMoveMap.put(completePlayer2Url,player2);
     //Following map will be of the form "PlayerName -> PlayerServiceURL"
     Map<String,String> playerNames = moveManager.sendInitialSettings(ImmutableList.<String>of(
         completePlayer1Url,
         completePlayer2Url
     ), initialSettings);
     List<PlayerInfo> playerInfoList = new ArrayList<PlayerInfo>();
+    List<String> playerNameList = new ArrayList<String>();
     for(Map.Entry<String,String> entry:playerNames.entrySet()){
-    PlayerInfo player = new PlayerInfo(entry.getValue(), entry.getKey());
+      PlayerInfo player = new PlayerInfo(entry.getValue(), entry.getKey());
     playerInfoList.add(player);
+    playerNameList.add(entry.getValue());
   }
     moveManager.addPlayers(playerInfoList);
+    return playerNameList;
   }
 
   @RequestMapping(value = "/startGame", method = RequestMethod.POST)
@@ -107,20 +120,31 @@ public class GameLandingPageController
   {
     try {
       while (!gs.isGameOver()) {
-        // sendGameStateToPlayers( gs.getCurrMove() );
-        simulateGame();
+         sendGameStateToPlayers( gs.getCurrMove() );
+        //simulateGame();
         try {
           BlockingQueue<PlayerMove> currentQueue = moveManager.getBlockingMovesQueue();
           //Block until we get both player moves
           PlayerMove playerMove1 = currentQueue.take();
           PlayerMove playerMove2 = currentQueue.take();
-          //Thread.sleep(4000);
+          System.out.println("SLEEPING GN");
+          Thread.sleep(1000);
+          System.out.println("Got player1 moves as"+playerMove1.getMoveType().toString());
+          System.out.println("Got player2 moves as"+playerMove2.getMoveType().toString());
+
+          gs.setMoveListPlayer1(playerMove1.getMoveType().toString());
+          gs.setMoveListPlayer2(playerMove2.getMoveType().toString());
+          synchronized (lock){
+            lock.wait();
+          }
+          System.out.println("Lock is now released");
         }
         catch (InterruptedException e) {
           e.printStackTrace();
         }
         validatePlayerMovesAndUpdateGameState();
       }
+      System.out.println("GAME OVER!!!");
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -140,10 +164,10 @@ public class GameLandingPageController
       System.out.println("SEED is : " + sim1 + " AND " + sim2);
       for (int i = 0; i < arrayLength; i++) {
         for (int j = 0; j < arrayLength; j++) {
-          if (gs.getGameState(i, j) == Globals.currPositionPlayer1) {
+          if (gs.getGameBoard(i, j) == Globals.currPositionPlayer1) {
             x1 = i;
             y1 = j;
-          } else if (gs.getGameState(i, j) == Globals.currPositionPlayer2) {
+          } else if (gs.getGameBoard(i, j) == Globals.currPositionPlayer2) {
             x2 = i;
             y2 = j;
           }
@@ -211,55 +235,56 @@ public class GameLandingPageController
   private void validatePlayerMovesAndUpdateGameState()
   {
     try {
-      int currentMove = gs.getCurrMove();
-      String movePlayer1 = gs.getMoveListPlayer1().get(currentMove);
-      String movePlayer2 = gs.getMoveListPlayer2().get(currentMove);
+      int currentRound = gs.getCurrMove();
+      currentRound --;
+      String movePlayer1 = gs.getMoveListPlayer1().get(currentRound);
+      String movePlayer2 = gs.getMoveListPlayer2().get(currentRound);
       if (movePlayer1 == null) {
-        movePlayer1 = currentMove != 0 ? gs.getMoveListPlayer1().get(currentMove - 1) : Globals.moves.Up.toString();
-        gs.getMoveListPlayer1().put(currentMove, movePlayer1);
+        movePlayer1 = currentRound != 0 ? gs.getMoveListPlayer1().get(currentRound - 1) : Globals.moves.Up.toString();
+        gs.getMoveListPlayer1().put(currentRound, movePlayer1);
       }
       if (movePlayer2 == null) {
-        movePlayer2 = currentMove != 0 ? gs.getMoveListPlayer2().get(currentMove - 1) : Globals.moves.Up.toString();
-        gs.getMoveListPlayer2().put(currentMove, movePlayer2);
+        movePlayer2 = currentRound != 0 ? gs.getMoveListPlayer2().get(currentRound - 1) : Globals.moves.Up.toString();
+        gs.getMoveListPlayer2().put(currentRound, movePlayer2);
       }
       System.out.println("hereeeeeeee 1 " + movePlayer1 + " " + movePlayer2);
-      if (currentMove > 0) {
+      if (currentRound > 0) {
         if (movePlayer1.equalsIgnoreCase(Globals.moves.Up.toString()) && gs.getMoveListPlayer1()
-                                                                           .get(currentMove - 1)
+                                                                           .get(currentRound - 1)
                                                                            .equalsIgnoreCase(Globals.moves.Down.toString())) {
           movePlayer1 = Globals.moves.Down.toString();
-          gs.getMoveListPlayer1().put(currentMove, movePlayer1);
+          gs.getMoveListPlayer1().put(currentRound, movePlayer1);
         } else if (movePlayer1.equalsIgnoreCase(Globals.moves.Down.toString())
-                   && gs.getMoveListPlayer1().get(currentMove - 1).equalsIgnoreCase(Globals.moves.Up.toString())) {
+                   && gs.getMoveListPlayer1().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Up.toString())) {
           movePlayer1 = Globals.moves.Up.toString();
-          gs.getMoveListPlayer1().put(currentMove, movePlayer1);
+          gs.getMoveListPlayer1().put(currentRound, movePlayer1);
         } else if (movePlayer1.equalsIgnoreCase(Globals.moves.Left.toString())
-                   && gs.getMoveListPlayer1().get(currentMove - 1).equalsIgnoreCase(Globals.moves.Right.toString())) {
+                   && gs.getMoveListPlayer1().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Right.toString())) {
           movePlayer1 = Globals.moves.Right.toString();
-          gs.getMoveListPlayer1().put(currentMove, movePlayer1);
+          gs.getMoveListPlayer1().put(currentRound, movePlayer1);
         } else if (movePlayer1.equalsIgnoreCase(Globals.moves.Right.toString())
-                   && gs.getMoveListPlayer1().get(currentMove - 1).equalsIgnoreCase(Globals.moves.Left.toString())) {
+                   && gs.getMoveListPlayer1().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Left.toString())) {
           movePlayer1 = Globals.moves.Left.toString();
-          gs.getMoveListPlayer1().put(currentMove, movePlayer1);
+          gs.getMoveListPlayer1().put(currentRound, movePlayer1);
         }
 
         if (movePlayer2.equalsIgnoreCase(Globals.moves.Up.toString()) && gs.getMoveListPlayer2()
-                                                                           .get(currentMove - 1)
+                                                                           .get(currentRound - 1)
                                                                            .equalsIgnoreCase(Globals.moves.Down.toString())) {
           movePlayer2 = Globals.moves.Down.toString();
-          gs.getMoveListPlayer2().put(currentMove, movePlayer2);
+          gs.getMoveListPlayer2().put(currentRound, movePlayer2);
         } else if (movePlayer2.equalsIgnoreCase(Globals.moves.Down.toString())
-                   && gs.getMoveListPlayer2().get(currentMove - 1).equalsIgnoreCase(Globals.moves.Up.toString())) {
+                   && gs.getMoveListPlayer2().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Up.toString())) {
           movePlayer2 = Globals.moves.Up.toString();
-          gs.getMoveListPlayer2().put(currentMove, movePlayer2);
+          gs.getMoveListPlayer2().put(currentRound, movePlayer2);
         } else if (movePlayer2.equalsIgnoreCase(Globals.moves.Left.toString())
-                   && gs.getMoveListPlayer2().get(currentMove - 1).equalsIgnoreCase(Globals.moves.Right.toString())) {
+                   && gs.getMoveListPlayer2().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Right.toString())) {
           movePlayer2 = Globals.moves.Right.toString();
-          gs.getMoveListPlayer2().put(currentMove, movePlayer2);
+          gs.getMoveListPlayer2().put(currentRound, movePlayer2);
         } else if (movePlayer2.equalsIgnoreCase(Globals.moves.Right.toString())
-                   && gs.getMoveListPlayer2().get(currentMove - 1).equalsIgnoreCase(Globals.moves.Left.toString())) {
+                   && gs.getMoveListPlayer2().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Left.toString())) {
           movePlayer2 = Globals.moves.Left.toString();
-          gs.getMoveListPlayer2().put(currentMove, movePlayer2);
+          gs.getMoveListPlayer2().put(currentRound, movePlayer2);
         }
       }
       boolean player1loses = false;
@@ -271,10 +296,10 @@ public class GameLandingPageController
       int y2 = 0;
       for (int i = 0; i < arrayLength; i++) {
         for (int j = 0; j < arrayLength; j++) {
-          if (gs.getGameState(i, j) == Globals.currPositionPlayer1) {
+          if (gs.getGameBoard(i, j) == Globals.currPositionPlayer1) {
             x1 = i;
             y1 = j;
-          } else if (gs.getGameState(i, j) == Globals.currPositionPlayer2) {
+          } else if (gs.getGameBoard(i, j) == Globals.currPositionPlayer2) {
             x2 = i;
             y2 = j;
           }
@@ -323,13 +348,17 @@ public class GameLandingPageController
           gs.setWinner(0);
           gs.setGameOver(true);
         } else {
-          gs.setGameState(x10, y10, Globals.wallCell);
+          gs.getGameBoard().setCellContent(x10, y10, Globals.wallCell);
+          gs.getGameBoard().setCellContent(x1, y1, Globals.currPositionPlayer1);
+          gs.getGameBoard().setCellContent(x20, y20, Globals.wallCell);
+          gs.getGameBoard().setCellContent(x2, y2, Globals.currPositionPlayer2);
+          /*gs.setGameState(x10, y10, Globals.wallCell);
           gs.setGameState(x1, y1, Globals.currPositionPlayer1);
           gs.setGameState(x20, y20, Globals.wallCell);
-          gs.setGameState(x2, y2, Globals.currPositionPlayer2);
+          gs.setGameState(x2, y2, Globals.currPositionPlayer2);*/
         }
       }
-      gs.setCurrMove(currentMove + 1);
+      gs.setCurrMove(currentRound + 1);
       gs.setCurrentMovePlayer1(movePlayer1.toUpperCase());
       gs.setCurrentMovePlayer2(movePlayer2.toUpperCase());
       gs.setMoveOver(true);
@@ -346,36 +375,42 @@ public class GameLandingPageController
           Globals.moves.Down.toString()) && x + 1 > 15)
           || (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && y - 1 < 0)
           || (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && y + 1 > 15)) {
+        System.out.println("MOVE FAIL 1 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Up.toString()) && (gs.getGameState(x - 1, y) == Globals.wallCell
-                                                                       || gs.getGameState(x - 1, y)
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Up.toString()) && (gs.getGameBoard(x - 1, y) == Globals.wallCell
+                                                                       || gs.getGameBoard(x - 1, y)
                                                                           == Globals.currPositionPlayer1
-                                                                       || gs.getGameState(x - 1, y)
+                                                                       || gs.getGameBoard(x - 1, y)
                                                                           == Globals.currPositionPlayer2)) {
+        System.out.println("MOVE FAIL 2 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Down.toString()) && (gs.getGameState(x + 1, y) == Globals.wallCell
-                                                                         || gs.getGameState(x + 1, y)
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Down.toString()) && (gs.getGameBoard(x + 1, y) == Globals.wallCell
+                                                                         || gs.getGameBoard(x + 1, y)
                                                                             == Globals.currPositionPlayer1
-                                                                         || gs.getGameState(x + 1, y)
+                                                                         || gs.getGameBoard(x + 1, y)
                                                                             == Globals.currPositionPlayer2)) {
+        System.out.println("MOVE FAIL 3 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && (gs.getGameState(x, y - 1) == Globals.wallCell
-                                                                         || gs.getGameState(x, y - 1)
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && (gs.getGameBoard(x, y - 1) == Globals.wallCell
+                                                                         || gs.getGameBoard(x, y - 1)
                                                                             == Globals.currPositionPlayer1
-                                                                         || gs.getGameState(x, y - 1)
+                                                                         || gs.getGameBoard(x, y - 1)
                                                                             == Globals.currPositionPlayer2)) {
+        System.out.println("MOVE FAIL 4 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && (gs.getGameState(x, y + 1) == Globals.wallCell
-                                                                          || gs.getGameState(x, y + 1)
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && (gs.getGameBoard(x, y + 1) == Globals.wallCell
+                                                                          || gs.getGameBoard(x, y + 1)
                                                                              == Globals.currPositionPlayer1
-                                                                          || gs.getGameState(x, y + 1)
+                                                                          || gs.getGameBoard(x, y + 1)
                                                                              == Globals.currPositionPlayer2)) {
+        System.out.println("MOVE FAIL 5 "+x+" : "+y);
         return true;
       }
+      System.out.println("MOVE PASS");
       return false;
     }
     catch (Exception e) {
@@ -388,8 +423,8 @@ public class GameLandingPageController
   {
     gs.incrementRound();
     GameUpdate gameUpdate = new GameUpdate(gs.getRoundNumber(),gs.getGameBoard());
+    System.out.println("Incrementing round"+gameUpdate.getRoundNumber());
     moveManager.sendConfigAndMoveRequest(gameUpdate);
-
 
   }
 
@@ -398,8 +433,12 @@ public class GameLandingPageController
       throws ServletException, IOException
   {
     try {
+      synchronized (lock) {
+        lock.notifyAll();
+      }
       // TODO: Check if this works for you
       /* JSONObject jo = new JSONObject(); */
+      System.out.println("UI asking for next move...");
       HashMap<String, Object> playerProps = new HashMap<String, Object>();
       /*
        * jo.put( "player1currentmove",
@@ -442,6 +481,7 @@ public class GameLandingPageController
     player1 = null;
     player2 = null;
     gs = null;
+    moveManager = null;
     response.setContentType("text/plain");
     response.setHeader("Content-Type", "application/x-www-form-urlencoded");
     response.setHeader("Cache-Control", "no-cache");

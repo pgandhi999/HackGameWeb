@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.servlet.RequestScoped;
+import com.oath.common.snakewars.board.Cell;
 import com.oath.common.snakewars.board.MoveType;
+import com.oath.common.snakewars.settings.GameBoard;
 import com.oath.common.snakewars.settings.GameSettings;
 import com.oath.common.snakewars.settings.GameUpdate;
 import com.oath.snakewars.bot.BotHandler;
+import com.oath.snakewars.common.GameGlobal;
 import com.oath.snakewars.utils.SettingsProvider;
 import org.apache.log4j.Logger;
 
@@ -24,6 +27,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 @Path("oath/snakewars/playerservice")
 @RequestScoped
@@ -45,21 +49,27 @@ public class GameResource
   {
     //TODO Make mapper injectable
     ObjectMapper objectMapper = new ObjectMapper();
-    logger.info("Requested settings endpoint");
+    logger.info(GameGlobal.getPlayerName()+": Received settings from game server");
     try {
-      GameSettings initialSettings = objectMapper.readValue(in, GameSettings.class);
-    logger.info("Initial settings are" + initialSettings.getTimeBank());
-    SettingsProvider.build(initialSettings);
-    logger.info("Sending responser back");
+      Cell initCell = new Cell(0,0);
+      Map<GameSettings,Cell> initialSettingsMap = objectMapper.readValue(in, Map.class);
+      for(Map.Entry<GameSettings,Cell> initSettings:initialSettingsMap.entrySet()) {
+        SettingsProvider.build(initSettings.getKey());
+        initCell = initSettings.getValue();
+      }
+      GameBoard initGameBoard = SettingsProvider.getGameBoard();
+      initGameBoard.setCurrentCell(initCell);
+    logger.info("Sending response back");
     }
     catch (IOException e) {
       logger.error("Error while reading response", e);
     }
-    return Response.ok(ImmutableMap.of("receivedSettings", "true")).build();
+    return Response.ok(ImmutableMap.of("receivedSettings", GameGlobal.getPlayerName())).build();
   }
   @POST
   @Path("/update")
   @Consumes({MediaType.APPLICATION_JSON})
+  @Produces(MediaType.APPLICATION_JSON)
   public Response postUpdate(
       final InputStream in,
       @QueryParam("Test") final String cluster,
@@ -68,10 +78,12 @@ public class GameResource
   {
     //TODO Make mapper injectable
     ObjectMapper objectMapper = new ObjectMapper();
-    logger.info("Requested update endpoint");
+    logger.info(GameGlobal.getPlayerName()+":Received update endpoint");
     GameUpdate gameUpdate = objectMapper.readValue(in, GameUpdate.class);
     SettingsProvider.updateCurrentRound();
     SettingsProvider.updateGameBoard(gameUpdate.getGameBoard());
+    System.out.println(GameGlobal.getPlayerName()+":Round number Settings"+SettingsProvider.getCurrentRound());
+    System.out.println(GameGlobal.getPlayerName()+" Round number gameUpdate"+gameUpdate.getRoundNumber());
     if (SettingsProvider.getCurrentRound() == gameUpdate.getRoundNumber()) {
       return Response.ok(ImmutableMap.of("receivedUpdate", true)).build();
     }
@@ -81,7 +93,7 @@ public class GameResource
   }
   @GET
   @Path("/move")
-  @Produces(MediaType.TEXT_PLAIN)
+  @Produces(MediaType.APPLICATION_JSON)
   public MoveType sendNextMove() {
     if (SettingsProvider.fetchSettings()==null) {
       logger.error("Invoke the settings endpoint first");

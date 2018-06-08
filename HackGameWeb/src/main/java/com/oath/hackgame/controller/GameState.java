@@ -1,5 +1,6 @@
 package com.oath.hackgame.controller;
 
+import com.oath.common.snakewars.board.Cell;
 import com.oath.common.snakewars.settings.GameBoard;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ public class GameState
   private boolean isGameOver = false;
   private HashMap<Integer, String> moveListPlayer1 = new HashMap<Integer, String>();
   private HashMap<Integer, String> moveListPlayer2 = new HashMap<Integer, String>();
-  private int currMove = 0;
+  private int currMove = 1;
   private int winner = -1;
   private String currentMovePlayer1;
   private String currentMovePlayer2;
@@ -77,9 +78,10 @@ public class GameState
     }
   }
 
-  public int getGameState(int x, int y)
+  public int getGameBoard(int x, int y)
   {
-    return gameState[x][y];
+    return gameBoard.getCellContent(x,y);
+    //return gameState[x][y];
   }
 
   public void setGameState(int x, int y, int z)
@@ -87,9 +89,9 @@ public class GameState
     this.gameState[x][y] = z;
   }
 
-  public void setWholeGameState(int x1, int y1, int x2, int y2)
+  public void setWholeGameState(Cell player1, Cell player2)
   {
-    gameBoard.updateGameBoard(x1, y1, x2, y2);
+    gameBoard.updateGameBoard(player1, player2);
   }
 
   public int[][] getGameStateArray()
@@ -104,7 +106,7 @@ public class GameState
 
   public void setMoveListPlayer1(String move)
   {
-    this.moveListPlayer1.put(this.currMove, move);
+    this.moveListPlayer1.put(this.currMove - 1, move);
   }
 
   public HashMap<Integer, String> getMoveListPlayer2()
@@ -114,7 +116,7 @@ public class GameState
 
   public void setMoveListPlayer2(String move)
   {
-    this.moveListPlayer2.put(this.currMove, move);
+    this.moveListPlayer2.put(this.currMove - 1, move);
   }
 
   public boolean isGameOver()

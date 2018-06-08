@@ -1,6 +1,7 @@
 package com.oath.snakewars.main;
 
 import com.google.inject.servlet.GuiceFilter;
+import com.oath.snakewars.common.GameGlobal;
 import com.oath.snakewars.guice.InitGuiceContextListener;
 import com.sun.jersey.api.core.ResourceConfig;
 import org.apache.log4j.Logger;
@@ -10,6 +11,8 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import javax.servlet.DispatcherType;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
@@ -22,16 +25,20 @@ public class Main
   private static Server server;
   private static final String LOG4JPATH = "/home/atulmohan/";
   public static void main(String args[]) {
-    new Main().startServer(Integer.parseInt(args[0]));
+    new Main().startServer(Integer.parseInt(args[0]),args[1]);
   }
-  private void startServer(int port) {
+  private void startServer(int port, String playerName) {
     server = new Server(port);
+    GameGlobal.setPlayerName(playerName);
     ServletContextHandler context = createRootContext();
     context.addEventListener(new InitGuiceContextListener());
     context.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
     // To prevent Guice from handling the request
     context.addServlet(DefaultServlet.class, "/");
     updateLog4jConfiguration(LOG4JPATH+"log_"+port+".log");
+
+
+
     try {
       server.start();
       log.info("Server started at port "+port);
