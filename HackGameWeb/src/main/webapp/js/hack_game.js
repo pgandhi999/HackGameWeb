@@ -13,7 +13,6 @@ function initGame() {
  	xhttp=new XMLHttpRequest();
  	xhttp.onreadystatechange = function() {
  	    if (xhttp.readyState == 4 && xhttp.status == 200) {
- 	    	console.log("hereeeeeee 0 "+xhttp.responseText);
  	    	var obj = JSON.parse(xhttp.responseText);
  	    	var player1x = obj.player1x;
  	    	var player1y = obj.player1y;
@@ -23,10 +22,13 @@ function initGame() {
  	    	var player2name = obj.player2name;
  	    	document.getElementById("player1name").innerHTML = player1name;
  	    	document.getElementById("player2name").innerHTML = player2name;
+ 	    	console.log("INIT GAME COORD "+player1x+" "+player1y+" "+player2x+" "+player2y);
  	    	initRender(player1x, player1y, player2x, player2y);
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/getInitGameState", true);
+ 	//xhttp.open("POST", "/"+servletName+"/game/getInitGameState", true);
+ 	 	xhttp.open("POST", "/"+"game/getInitGameState", true);
+
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
 }
@@ -60,13 +62,15 @@ function startGame() {
  	    	
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/startGame", true);
+ 	//xhttp.open("POST", "/"+servletName+"/game/startGame", true);
+ 	 	xhttp.open("POST", "/"+"game/startGame", true);
+
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
  	interval1 = window.setInterval(function() {
  		getCurrentState();
  		
- 	}, 1000);
+ 	}, 500);
 }
 
 function getCurrentState() {
@@ -90,7 +94,9 @@ function getCurrentState() {
  	    	}
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/getCurrentGameState", true);
+ 	//xhttp.open("POST", "/"+servletName+"/game/getCurrentGameState", true);
+ 	 	xhttp.open("POST", "/"+"game/getCurrentGameState", true);
+
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
 }
@@ -161,7 +167,8 @@ function clearGameState() {
  	    if (xhttp.readyState == 4 && xhttp.status == 200) {
  	    }
  	}
- 	xhttp.open("POST", "/"+servletName+"/clearGameState", true);
+ //	xhttp.open("POST", "/"+servletName+"/game/clearGameState", true);
+  	xhttp.open("POST", "/"+"game/clearGameState", true);
  	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
  	xhttp.send();
 }

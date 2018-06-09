@@ -1,7 +1,10 @@
 package com.oath.common.snakewars.settings;
 
-public enum CellType
+
+public class CellType
 {
-  EMPTY, OCCUPIED, PLAYER1, PLAYER2
+  public static final int EMPTY = 0;
+  public static final int PLAYER1 = 2;
+  public static final int PLAYER2 = 3;
 }
 

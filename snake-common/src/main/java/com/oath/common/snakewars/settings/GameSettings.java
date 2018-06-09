@@ -1,5 +1,8 @@
 package com.oath.common.snakewars.settings;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -10,7 +13,7 @@ public class GameSettings
   private int timeBank;
   private final int timePerMove;
   private final int maxTimeBank;
-  private final List<String> playerNames;
+  private List<String> playerNames;
   private final String selfBotName;
   private final int botId;
   private final GameBoard gameBoard;
@@ -54,21 +57,24 @@ public class GameSettings
     this.timeBank = timeBank;
   }
 
+  public void setPlayerNames (List<String> playerNames) {
+    this.playerNames = playerNames;
+  }
+  @JsonCreator
   public GameSettings(
-      int timeBank,
-      int timePerMove,
-      int maxTimeBank,
-      List<String> playerNames,
-      String selfBotName,
-      int botId,
-      int boardHeight,
-      int boardWidth
+      @JsonProperty("timeBank") int timeBank,
+      @JsonProperty("timePerMove") int timePerMove,
+      @JsonProperty("maxTimeBank") int maxTimeBank,
+      @JsonProperty("selfBotName") String selfBotName,
+      @JsonProperty("botId") int botId,
+      @JsonProperty("boardHeight") int boardHeight,
+      @JsonProperty("boardWidth") int boardWidth
   )
   {
     this.timeBank = timeBank;
     this.timePerMove = timePerMove;
     this.maxTimeBank = maxTimeBank;
-    this.playerNames = new ArrayList<String>(playerNames);
+    this.playerNames = new ArrayList<String>();
     this.selfBotName = selfBotName;
     this.botId = botId;
     this.gameBoard = new GameBoard(boardHeight, boardWidth);

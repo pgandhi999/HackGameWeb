@@ -1,5 +1,14 @@
 package com.oath.common.snakewars.board;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum MoveType {
-  LEFT,RIGHT,UP,DOWN
+  @JsonProperty("LEFT")
+  LEFT,
+  @JsonProperty("RIGHT")
+  RIGHT,
+  @JsonProperty("UP")
+  UP,
+  @JsonProperty("DOWN")
+  DOWN
 }
