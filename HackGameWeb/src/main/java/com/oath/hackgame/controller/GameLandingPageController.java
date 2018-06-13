@@ -92,12 +92,11 @@ public class GameLandingPageController
     );
     GameBoard initialBoard = initialSettings.getGameBoard();
     gs.setGameBoard(initialBoard);
+    //Following update call will also set the current player cells
     initialBoard.updateGameBoard(player1,player2);
     String completePlayer1Url = new StringBuffer(StartValues.SERVICE_URL1).append(StartValues.PLAYER_SERVICE_CONTEXT).toString();
     String completePlayer2Url = new StringBuffer(StartValues.SERVICE_URL2).append(StartValues.PLAYER_SERVICE_CONTEXT).toString();
-    Map<String,Cell> playerMoveMap = new HashMap<String, Cell>(2);
-    playerMoveMap.put(completePlayer1Url,player1);
-    playerMoveMap.put(completePlayer2Url,player2);
+
     //Following map will be of the form "PlayerName -> PlayerServiceURL"
     Map<String,String> playerNames = moveManager.sendInitialSettings(ImmutableList.<String>of(
         completePlayer1Url,
@@ -128,7 +127,7 @@ public class GameLandingPageController
           PlayerMove playerMove1 = currentQueue.take();
           PlayerMove playerMove2 = currentQueue.take();
           System.out.println("SLEEPING GN");
-          Thread.sleep(1000);
+          Thread.sleep(2000);
           System.out.println("Got player1 moves as"+playerMove1.getMoveType().toString());
           System.out.println("Got player2 moves as"+playerMove2.getMoveType().toString());
 
@@ -352,6 +351,9 @@ public class GameLandingPageController
           gs.getGameBoard().setCellContent(x1, y1, Globals.currPositionPlayer1);
           gs.getGameBoard().setCellContent(x20, y20, Globals.wallCell);
           gs.getGameBoard().setCellContent(x2, y2, Globals.currPositionPlayer2);
+          gs.getGameBoard().setCurrentCellPlayer1(new Cell(x1,y1));
+          gs.getGameBoard().setCurrentCellPlayer2(new Cell(x2,y2));
+
           /*gs.setGameState(x10, y10, Globals.wallCell);
           gs.setGameState(x1, y1, Globals.currPositionPlayer1);
           gs.setGameState(x20, y20, Globals.wallCell);

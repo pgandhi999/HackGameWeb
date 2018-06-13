@@ -38,7 +38,7 @@ public class SettingsProvider
   {
     gameSettings = settings;
     currentRound = 0;
-    gameBoard = null;
+    gameBoard = settings.getGameBoard();
     previousMove = null;
   }
 

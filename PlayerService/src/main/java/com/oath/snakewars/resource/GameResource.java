@@ -7,6 +7,7 @@ import com.google.inject.servlet.RequestScoped;
 import com.oath.common.snakewars.board.Cell;
 import com.oath.common.snakewars.board.MoveType;
 import com.oath.common.snakewars.settings.GameBoard;
+import com.oath.common.snakewars.settings.GameBoardState;
 import com.oath.common.snakewars.settings.GameSettings;
 import com.oath.common.snakewars.settings.GameUpdate;
 import com.oath.snakewars.bot.BotHandler;
@@ -52,13 +53,8 @@ public class GameResource
     logger.info(GameGlobal.getPlayerName()+": Received settings from game server");
     try {
       Cell initCell = new Cell(0,0);
-      Map<GameSettings,Cell> initialSettingsMap = objectMapper.readValue(in, Map.class);
-      for(Map.Entry<GameSettings,Cell> initSettings:initialSettingsMap.entrySet()) {
-        SettingsProvider.build(initSettings.getKey());
-        initCell = initSettings.getValue();
-      }
-      GameBoard initGameBoard = SettingsProvider.getGameBoard();
-      initGameBoard.setCurrentCell(initCell);
+      GameSettings initialSettings = objectMapper.readValue(in, GameSettings.class);
+      SettingsProvider.build(initialSettings);
     logger.info("Sending response back");
     }
     catch (IOException e) {
@@ -99,7 +95,8 @@ public class GameResource
       logger.error("Invoke the settings endpoint first");
       return null;
     }
-    BotHandler botHandler = new BotHandler();
+    GameBoardState gameBoardState = new GameBoardState(SettingsProvider.getGameBoard());
+    BotHandler botHandler = new BotHandler(gameBoardState);
     logger.info("Requested next move endpoint");
     return botHandler.fetchNextMove();
   }
