@@ -131,12 +131,26 @@ public class GameLandingPageController
           System.out.println("Got player1 moves as"+playerMove1.getMoveType().toString());
           System.out.println("Got player2 moves as"+playerMove2.getMoveType().toString());
 
-          gs.setMoveListPlayer1(playerMove1.getMoveType().toString());
-          gs.setMoveListPlayer2(playerMove2.getMoveType().toString());
+          if(playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
+                  playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
+                  playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Left.toString()) ||
+                  playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Right.toString())) {
+            gs.setMoveListPlayer1(playerMove1.getMoveType().toString());
+          } else {
+            gs.setMoveListPlayer1(null);
+          }
+          if(playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
+                  playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
+                  playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Left.toString()) ||
+                  playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Right.toString())) {
+            gs.setMoveListPlayer2(playerMove2.getMoveType().toString());
+          } else {
+            gs.setMoveListPlayer2(null);
+          }
+
           synchronized (lock){
             lock.wait();
           }
-          System.out.println("Lock is now released");
         }
         catch (InterruptedException e) {
           e.printStackTrace();
@@ -248,9 +262,8 @@ public class GameLandingPageController
       }
       System.out.println("hereeeeeeee 1 " + movePlayer1 + " " + movePlayer2);
       if (currentRound > 0) {
-        if (movePlayer1.equalsIgnoreCase(Globals.moves.Up.toString()) && gs.getMoveListPlayer1()
-                                                                           .get(currentRound - 1)
-                                                                           .equalsIgnoreCase(Globals.moves.Down.toString())) {
+        if (movePlayer1.equalsIgnoreCase(Globals.moves.Up.toString())
+                && gs.getMoveListPlayer1().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Down.toString())) {
           movePlayer1 = Globals.moves.Down.toString();
           gs.getMoveListPlayer1().put(currentRound, movePlayer1);
         } else if (movePlayer1.equalsIgnoreCase(Globals.moves.Down.toString())
@@ -360,7 +373,7 @@ public class GameLandingPageController
           gs.setGameState(x2, y2, Globals.currPositionPlayer2);*/
         }
       }
-      gs.setCurrMove(currentRound + 1);
+      gs.setCurrMove(currentRound + 2);
       gs.setCurrentMovePlayer1(movePlayer1.toUpperCase());
       gs.setCurrentMovePlayer2(movePlayer2.toUpperCase());
       gs.setMoveOver(true);
