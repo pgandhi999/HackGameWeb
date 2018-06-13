@@ -9,7 +9,8 @@ public class GameBoard
   private final int boardWidth;
   private final int boardHeight;
   private final int board[][];
-  private Cell currentCell;
+  private Cell currentCellPlayer1;
+  private Cell currentCellPlayer2;
 
   @JsonCreator
   public GameBoard (
@@ -23,7 +24,9 @@ public class GameBoard
         board[i][j] = CellType.EMPTY;
       }
     }
-    currentCell = new Cell(0,0);
+    currentCellPlayer1 = new Cell(0,0);
+    currentCellPlayer2 = new Cell(0,0);
+
   }
   public int getBoardWidth() {
     return boardWidth;
@@ -36,6 +39,8 @@ public class GameBoard
   public void updateGameBoard(Cell player1, Cell player2) {
     board[player1.getX()][player1.getY()] = CellType.PLAYER1;
     board[player2.getX()][player2.getY()] = CellType.PLAYER2;
+    setCurrentCellPlayer1(player1);
+    setCurrentCellPlayer2(player2);
   }
   public int getCellContent(int x, int y) {
     return board[x][y];
@@ -43,11 +48,19 @@ public class GameBoard
   public void setCellContent(int x, int y, int z) {
     board[x][y] = z;
   }
-  public Cell getCurrentCell()
-  {
-    return currentCell;
+  public Cell getCurrentCellPlayer1()
+{
+  return currentCellPlayer1;
+}
+  public void setCurrentCellPlayer1(Cell currentCell) {
+    this.currentCellPlayer1 = currentCell;
   }
-  public void setCurrentCell(Cell currentCell) {
-    this.currentCell = currentCell;
+
+  public Cell getCurrentCellPlayer2()
+  {
+    return currentCellPlayer2;
+  }
+  public void setCurrentCellPlayer2(Cell currentCell) {
+    this.currentCellPlayer2 = currentCell;
   }
 }

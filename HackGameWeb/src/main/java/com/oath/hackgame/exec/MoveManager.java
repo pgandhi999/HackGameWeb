@@ -57,42 +57,42 @@ public class MoveManager
     playerInfoList.addAll(players);
     managerExec = Executors.newFixedThreadPool(playerInfoList.size());
   }
-  public Map<String,String> sendInitialSettings (Map<String,Cell> playerServiceUrls, final GameSettings gameSettings) {
+  public Map<String,String> sendInitialSettings (List<String> playerServiceUrls, final GameSettings gameSettings) {
     Map<String,String> playerNames = new HashMap<String, String>();
     List<Future> responseFutures = new ArrayList<Future>();
     managerExec = Executors.newFixedThreadPool(2);
-    for (final Map.Entry<String,Cell> playerServiceUrl : playerServiceUrls.entrySet()) {
-      System.out.println("Sending initial settings to "+playerServiceUrl);
-      responseFutures.add(managerExec.submit(
-          new Callable()
-          {
-            public String call()
+    for (final String playerServiceUrl : playerServiceUrls) {
+        System.out.println("Sending initial settings to " + playerServiceUrl);
+        responseFutures.add(managerExec.submit(
+            new Callable()
             {
-              //Make calls to config API and move API calls
-               String playerName = postInitSettingsToUser(playerServiceUrl.getKey(),playerServiceUrl.getValue(),gameSettings);
-               return playerName;
+              public String call()
+              {
+                //Make calls to config API and move API calls
+                String playerName = postInitSettingsToUser(playerServiceUrl, gameSettings);
+                return playerName;
+              }
             }
+        ));
+        try {
+          for (Future fut : responseFutures) {
+            String playName = String.valueOf(fut.get());
+            playerNames.put(playerServiceUrl, playName);
           }
-      ));
-      try {
-        for (Future fut : responseFutures) {
-          String playName = String.valueOf(fut.get());
-          playerNames.put(playerServiceUrl.getKey(),playName);
+        }
+        catch (Exception ie) {
+          System.out.println("Thread interrupted!");
         }
       }
-      catch (Exception ie) {
-        System.out.println("Thread interrupted!");
-      }
-    }
     return playerNames;
   }
-  private String postInitSettingsToUser (String playerServiceUrl, Cell initialPosition, GameSettings gameSettings) {
+  private String postInitSettingsToUser (String playerServiceUrl, GameSettings gameSettings) {
     String configEndPoint = new StringBuffer(playerServiceUrl).append("/settings").toString();
     HttpPost httpPost = new HttpPost(configEndPoint);
     httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
     try {
       StringEntity requestEntity = new StringEntity(
-          objectMapper.writeValueAsString(ImmutableMap.of(gameSettings,initialPosition)));
+          objectMapper.writeValueAsString(gameSettings));
       httpPost.setEntity(requestEntity);
       CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
       //String responseString = new BasicResponseHandler().handleResponse(httpResponse);
