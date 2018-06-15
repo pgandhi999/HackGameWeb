@@ -11,10 +11,16 @@ import com.oath.common.snakewars.settings.GameSettings;
 import com.oath.common.snakewars.settings.GameUpdate;
 import com.oath.hackgame.common.PlayerMove;
 import com.oath.hackgame.controller.GameState;
+import com.oath.hackgame.controller.Globals;
 import com.oath.hackgame.controller.PlayerInfo;
 
 
+import org.apache.commons.httpclient.util.TimeoutController;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -22,10 +28,16 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -39,6 +51,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeoutException;
 
 public class MoveManager
 {
@@ -160,10 +173,22 @@ public class MoveManager
     System.out.println("Asking for move"+configEndPoint);
     HttpGet httpGet = new HttpGet(configEndPoint);
     try {
-      CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+      // Timeout specific http client builder
+      RequestConfig.Builder requestBuilder = RequestConfig.custom();
+      requestBuilder = requestBuilder.setConnectTimeout(Globals.MOVE_TIME+200);
+      requestBuilder = requestBuilder.setSocketTimeout(Globals.MOVE_TIME+200);
+      HttpClientBuilder builder = HttpClientBuilder.create();
+      builder.setDefaultRequestConfig(requestBuilder.build());
+      HttpClient timedClient = builder.build();
+
+      HttpResponse httpResponse = timedClient.execute(httpGet);
       MoveType playerMove = objectMapper.readValue(httpResponse.getEntity().getContent(),MoveType.class);
       System.out.println("Got move "+playerMove.toString());
       return playerMove;
+    }
+    catch (SocketTimeoutException exception) {
+      System.out.println("Connection timeout. Defaulting move");
+      return MoveType.PASS;
     }
     catch (IOException ioe) {
       System.out.println("Error while getting move");

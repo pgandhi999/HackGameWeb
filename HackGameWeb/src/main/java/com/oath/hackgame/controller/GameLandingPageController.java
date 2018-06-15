@@ -188,10 +188,10 @@ public class GameLandingPageController
       System.out.println("SEED is : " + sim1 + " AND " + sim2);
       for (int i = 0; i < arrayLength; i++) {
         for (int j = 0; j < arrayLength; j++) {
-          if (gs.getGameBoard(i, j) == Globals.currPositionPlayer1) {
+          if (gs.getGameBoard(i, j) == Globals.CURR_POSITION_PLAYER_1) {
             x1 = i;
             y1 = j;
-          } else if (gs.getGameBoard(i, j) == Globals.currPositionPlayer2) {
+          } else if (gs.getGameBoard(i, j) == Globals.CURR_POSITION_PLAYER_2) {
             x2 = i;
             y2 = j;
           }
@@ -319,10 +319,10 @@ public class GameLandingPageController
       int y2 = 0;
       for (int i = 0; i < arrayLength; i++) {
         for (int j = 0; j < arrayLength; j++) {
-          if (gs.getGameBoard(i, j) == Globals.currPositionPlayer1) {
+          if (gs.getGameBoard(i, j) == Globals.CURR_POSITION_PLAYER_1) {
             x1 = i;
             y1 = j;
-          } else if (gs.getGameBoard(i, j) == Globals.currPositionPlayer2) {
+          } else if (gs.getGameBoard(i, j) == Globals.CURR_POSITION_PLAYER_2) {
             x2 = i;
             y2 = j;
           }
@@ -371,17 +371,17 @@ public class GameLandingPageController
           gs.setWinner(0);
           gs.setGameOver(true);
         } else {
-          gs.getGameBoard().setCellContent(x10, y10, Globals.wallCell);
-          gs.getGameBoard().setCellContent(x1, y1, Globals.currPositionPlayer1);
-          gs.getGameBoard().setCellContent(x20, y20, Globals.wallCell);
-          gs.getGameBoard().setCellContent(x2, y2, Globals.currPositionPlayer2);
+          gs.getGameBoard().setCellContent(x10, y10, Globals.WALL_CELL);
+          gs.getGameBoard().setCellContent(x1, y1, Globals.CURR_POSITION_PLAYER_1);
+          gs.getGameBoard().setCellContent(x20, y20, Globals.WALL_CELL);
+          gs.getGameBoard().setCellContent(x2, y2, Globals.CURR_POSITION_PLAYER_2);
           gs.getGameBoard().setCurrentCellPlayer1(new Cell(x1,y1));
           gs.getGameBoard().setCurrentCellPlayer2(new Cell(x2,y2));
 
-          /*gs.setGameState(x10, y10, Globals.wallCell);
-          gs.setGameState(x1, y1, Globals.currPositionPlayer1);
-          gs.setGameState(x20, y20, Globals.wallCell);
-          gs.setGameState(x2, y2, Globals.currPositionPlayer2);*/
+          /*gs.setGameState(x10, y10, Globals.WALL_CELL);
+          gs.setGameState(x1, y1, Globals.CURR_POSITION_PLAYER_1);
+          gs.setGameState(x20, y20, Globals.WALL_CELL);
+          gs.setGameState(x2, y2, Globals.CURR_POSITION_PLAYER_2);*/
         }
       }
       gs.setCurrMove(currentRound + 2);
@@ -404,35 +404,35 @@ public class GameLandingPageController
         System.out.println("MOVE FAIL 1 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Up.toString()) && (gs.getGameBoard(x - 1, y) == Globals.wallCell
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Up.toString()) && (gs.getGameBoard(x - 1, y) == Globals.WALL_CELL
                                                                        || gs.getGameBoard(x - 1, y)
-                                                                          == Globals.currPositionPlayer1
+                                                                          == Globals.CURR_POSITION_PLAYER_1
                                                                        || gs.getGameBoard(x - 1, y)
-                                                                          == Globals.currPositionPlayer2)) {
+                                                                          == Globals.CURR_POSITION_PLAYER_2)) {
         System.out.println("MOVE FAIL 2 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Down.toString()) && (gs.getGameBoard(x + 1, y) == Globals.wallCell
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Down.toString()) && (gs.getGameBoard(x + 1, y) == Globals.WALL_CELL
                                                                          || gs.getGameBoard(x + 1, y)
-                                                                            == Globals.currPositionPlayer1
+                                                                            == Globals.CURR_POSITION_PLAYER_1
                                                                          || gs.getGameBoard(x + 1, y)
-                                                                            == Globals.currPositionPlayer2)) {
+                                                                            == Globals.CURR_POSITION_PLAYER_2)) {
         System.out.println("MOVE FAIL 3 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && (gs.getGameBoard(x, y - 1) == Globals.wallCell
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && (gs.getGameBoard(x, y - 1) == Globals.WALL_CELL
                                                                          || gs.getGameBoard(x, y - 1)
-                                                                            == Globals.currPositionPlayer1
+                                                                            == Globals.CURR_POSITION_PLAYER_1
                                                                          || gs.getGameBoard(x, y - 1)
-                                                                            == Globals.currPositionPlayer2)) {
+                                                                            == Globals.CURR_POSITION_PLAYER_2)) {
         System.out.println("MOVE FAIL 4 "+x+" : "+y);
         return true;
       }
-      if (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && (gs.getGameBoard(x, y + 1) == Globals.wallCell
+      if (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && (gs.getGameBoard(x, y + 1) == Globals.WALL_CELL
                                                                           || gs.getGameBoard(x, y + 1)
-                                                                             == Globals.currPositionPlayer1
+                                                                             == Globals.CURR_POSITION_PLAYER_1
                                                                           || gs.getGameBoard(x, y + 1)
-                                                                             == Globals.currPositionPlayer2)) {
+                                                                             == Globals.CURR_POSITION_PLAYER_2)) {
         System.out.println("MOVE FAIL 5 "+x+" : "+y);
         return true;
       }
