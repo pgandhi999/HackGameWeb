@@ -9,7 +9,9 @@ public class GameState
 {
   private int[][] gameState = new int[16][16];
   private boolean isGameOver = false;
+  //Maps round number to player1 move
   private HashMap<Integer, String> moveListPlayer1 = new HashMap<Integer, String>();
+  //Maps round number to player2 move
   private HashMap<Integer, String> moveListPlayer2 = new HashMap<Integer, String>();
   private int currMove = 1;
   private int winner = -1;
@@ -73,7 +75,7 @@ public class GameState
   {
     for (int i = 0; i < this.gameState.length; i++) {
       for (int j = 0; j < this.gameState.length; j++) {
-        this.gameState[i][j] = Globals.emptyCell;
+        this.gameState[i][j] = Globals.EMPTY_CELL;
       }
     }
   }

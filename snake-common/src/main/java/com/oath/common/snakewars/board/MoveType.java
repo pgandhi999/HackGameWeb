@@ -10,5 +10,7 @@ public enum MoveType {
   @JsonProperty("UP")
   UP,
   @JsonProperty("DOWN")
-  DOWN
+  DOWN,
+  @JsonProperty("PASS")
+  PASS
 }
