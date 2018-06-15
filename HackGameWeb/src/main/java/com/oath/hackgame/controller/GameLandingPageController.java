@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class GameLandingPageController
 {
 
-  public PlayerInfo player1 = null;
-  public PlayerInfo player2 = null;
+  public String player1 = null;
+  public String player2 = null;
   public GameState gs = null;
   public ObjectMapper objectMapper = new ObjectMapper();
   public MoveManager moveManager = new MoveManager();
@@ -65,8 +65,10 @@ public class GameLandingPageController
       //System.out.println("Board value at x1 y1 after is"+gs.getGameBoard().getCellContent(initPlayer1PosX,initPlayer1PosY));
       // TODO Try if this works
       HashMap<String, Object> playerProps = new HashMap<String, Object>();
-      playerProps.put("player1name", playerNames.get(0));
-      playerProps.put("player2name", playerNames.get(1));
+      player1 = playerNames.get(0);
+      player2 = playerNames.get(1);
+      playerProps.put("player1name", player1);
+      playerProps.put("player2name", player2);
       playerProps.put("player1x", initPlayer1Pos.getX());
       playerProps.put("player1y", initPlayer1Pos.getY());
       playerProps.put("player2x", initPlayer2Pos.getX());
@@ -126,24 +128,33 @@ public class GameLandingPageController
           //Block until we get both player moves
           PlayerMove playerMove1 = currentQueue.take();
           PlayerMove playerMove2 = currentQueue.take();
+          PlayerMove pl1 = null;
+          PlayerMove pl2 = null;
+          if (playerMove1.getPlayerInfo().getPlayerName().equalsIgnoreCase(player2)) {
+            pl1 = playerMove2;
+            pl2 = playerMove1;
+          } else {
+            pl1 = playerMove1;
+            pl2 = playerMove2;
+          }
           System.out.println("SLEEPING GN");
           Thread.sleep(2000);
-          System.out.println("Got player1 moves as"+playerMove1.getMoveType().toString());
-          System.out.println("Got player2 moves as"+playerMove2.getMoveType().toString());
+          System.out.println("Got player1 moves as"+pl1.getMoveType().toString());
+          System.out.println("Got player2 moves as"+pl2.getMoveType().toString());
 
-          if(playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
-                  playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
-                  playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Left.toString()) ||
-                  playerMove1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Right.toString())) {
-            gs.setMoveListPlayer1(playerMove1.getMoveType().toString());
+          if(pl1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
+                  pl1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
+                  pl1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Left.toString()) ||
+                  pl1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Right.toString())) {
+            gs.setMoveListPlayer1(pl1.getMoveType().toString());
           } else {
             gs.setMoveListPlayer1(null);
           }
-          if(playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
-                  playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
-                  playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Left.toString()) ||
-                  playerMove2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Right.toString())) {
-            gs.setMoveListPlayer2(playerMove2.getMoveType().toString());
+          if(pl2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
+                  pl2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
+                  pl2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Left.toString()) ||
+                  pl2.getMoveType().toString().equalsIgnoreCase(Globals.moves.Right.toString())) {
+            gs.setMoveListPlayer2(pl2.getMoveType().toString());
           } else {
             gs.setMoveListPlayer2(null);
           }
@@ -466,6 +477,7 @@ public class GameLandingPageController
       playerProps.put("player2currentmove", gs.getCurrentMovePlayer2());
       playerProps.put("isMoveOver", gs.isMoveOver());
       playerProps.put("isGameOver", gs.isGameOver());
+      playerProps.put("roundNumber", gs.getCurrMove() - 1);
       if (gs.isGameOver()) {
         playerProps.put("winner", gs.getWinner());
       }

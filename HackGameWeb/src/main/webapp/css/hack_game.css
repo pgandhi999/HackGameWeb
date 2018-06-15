@@ -134,3 +134,17 @@ h1
 	top: 800px;
 	font-size: 30px;
 }
+
+.roundnumber {
+	position: absolute;
+	left: 1300px;
+	top: 900px;
+	font-size: 30px;
+}
+
+.roundnumberinner {
+	position: absolute;
+	left: 1520px;
+	top: 900px;
+	font-size: 30px;
+}
