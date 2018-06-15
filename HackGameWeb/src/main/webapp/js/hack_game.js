@@ -83,6 +83,7 @@ function getCurrentState() {
  	    	var isMoveOver = obj.isMoveOver;
  	    	if (isMoveOver) {
  	    		render(obj.player1currentmove, obj.player2currentmove);
+                document.getElementById("roundnumber").innerHTML = obj.roundNumber;
  	    		var isGameOver = obj.isGameOver;
  	    		if (isGameOver) {
  	    			clearInterval(interval1);
