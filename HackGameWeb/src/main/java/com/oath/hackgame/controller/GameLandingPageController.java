@@ -121,7 +121,11 @@ public class GameLandingPageController
   {
     try {
       while (!gs.isGameOver()) {
-         sendGameStateToPlayers( gs.getCurrMove() );
+
+        //TODO Replace currMove with round
+        sendGameStateToPlayers( gs.getCurrMove() );
+        //sendGameStateToPlayers( gs.getRoundNumber() );
+
         //simulateGame();
         try {
           BlockingQueue<PlayerMove> currentQueue = moveManager.getBlockingMovesQueue();
@@ -259,8 +263,12 @@ public class GameLandingPageController
   private void validatePlayerMovesAndUpdateGameState()
   {
     try {
+
+      //TODO Replace currMove with roundNumber
       int currentRound = gs.getCurrMove();
       currentRound --;
+      //int currentRound = gs.getRoundNumber();
+
       String movePlayer1 = gs.getMoveListPlayer1().get(currentRound);
       String movePlayer2 = gs.getMoveListPlayer2().get(currentRound);
       if (movePlayer1 == null) {
@@ -384,7 +392,10 @@ public class GameLandingPageController
           gs.setGameState(x2, y2, Globals.CURR_POSITION_PLAYER_2);*/
         }
       }
+      //TODO Replacing move with round
       gs.setCurrMove(currentRound + 2);
+      //gs.incrementRound();
+
       gs.setCurrentMovePlayer1(movePlayer1.toUpperCase());
       gs.setCurrentMovePlayer2(movePlayer2.toUpperCase());
       gs.setMoveOver(true);
@@ -477,7 +488,11 @@ public class GameLandingPageController
       playerProps.put("player2currentmove", gs.getCurrentMovePlayer2());
       playerProps.put("isMoveOver", gs.isMoveOver());
       playerProps.put("isGameOver", gs.isGameOver());
+
+      //TODO Replace currMove with roundNumber
       playerProps.put("roundNumber", gs.getCurrMove() - 1);
+      //playerProps.put("roundNumber", gs.getRoundNumber());
+
       if (gs.isGameOver()) {
         playerProps.put("winner", gs.getWinner());
       }

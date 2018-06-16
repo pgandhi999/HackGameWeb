@@ -11,8 +11,8 @@ public class GameBoardState
   private final int boardWidth;
   private final int boardHeight;
   private final int board[][];
-  private Cell currentCellPlayer1;
-  private Cell currentCellPlayer2;
+  private Cell myCurrentCell;
+  private Cell enemyCurrentCell;
 
   /*
    * Generates an empty board with random cells assigned to both players
@@ -24,16 +24,29 @@ public class GameBoardState
     this.board = new int[boardHeight][boardWidth];
     for (int i = 0; i < boardHeight; i++) {
       for (int j = 0; j < boardWidth; j++) {
-        board[i][j] = CellType.EMPTY;
+        board[i][j] = CellType.EMPTY.getValue();
       }
     }
-    currentCellPlayer1 = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
+    myCurrentCell = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
+                             ThreadLocalRandom.current().nextInt(0, 16));
+    enemyCurrentCell = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
+                                ThreadLocalRandom.current().nextInt(0, 16));
+    while (myCurrentCell.equals(enemyCurrentCell)) {
+      enemyCurrentCell = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
                                   ThreadLocalRandom.current().nextInt(0, 16));
-    currentCellPlayer2 = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
-                                  ThreadLocalRandom.current().nextInt(0, 16));
-    while (currentCellPlayer1.equals(currentCellPlayer2)) {
-      currentCellPlayer2 = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
-                                    ThreadLocalRandom.current().nextInt(0, 16));
+    }
+    setCellContent(myCurrentCell, CellType.MYCELL.getValue());
+    setCellContent(enemyCurrentCell, CellType.ENEMYCELL.getValue());
+  }
+
+  public GameBoardState (int boardHeight, int boardWidth ) {
+    this.boardHeight = boardHeight;
+    this.boardWidth = boardWidth;
+    this.board = new int[boardHeight][boardWidth];
+    for (int i = 0; i < boardHeight; i++) {
+      for (int j = 0; j < boardWidth; j++) {
+        board[i][j] = CellType.EMPTY.getValue();
+      }
     }
   }
 
@@ -47,19 +60,26 @@ public class GameBoardState
     return boardHeight;
   }
 
-  public int getCellContent(int x, int y)
+  public int getCellContent(Cell position)
   {
-    return board[x][y];
+    return board[position.getX()][position.getY()];
   }
 
-  public Cell getCurrentCellPlayer1()
+  public Cell getMyCurrentCell()
   {
-    return currentCellPlayer1;
+    return myCurrentCell;
   }
 
-  public Cell getCurrentCellPlayer2()
+  public Cell getEnemyCurrentCell()
   {
-    return currentCellPlayer2;
+    return enemyCurrentCell;
+  }
+
+  /*
+   *  Used only for BotRunner helper
+   */
+  public void setCellContent (Cell position, int cellType) {
+    board[position.getX()][position.getY()] = cellType;
   }
 }
 

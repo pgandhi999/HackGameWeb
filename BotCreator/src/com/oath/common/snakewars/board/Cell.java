@@ -1,7 +1,9 @@
 package com.oath.common.snakewars.board;
 
 /*
-  Represents the coordinates of a cell within the GameBoard
+ * Represents the coordinates of a cell within the Game board
+ * @param x: represents the row of the Game board
+ * @param y: represents the column of the Game board
  */
 
 public class Cell
@@ -17,16 +19,6 @@ public class Cell
   public int getY()
   {
     return y;
-  }
-
-  public void setX(int x)
-  {
-    this.x = x;
-  }
-
-  public void setY(int y)
-  {
-    this.y = y;
   }
 
   public Cell(int x, int y)

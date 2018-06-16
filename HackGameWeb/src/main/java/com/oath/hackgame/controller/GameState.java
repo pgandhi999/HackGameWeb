@@ -108,7 +108,10 @@ public class GameState
 
   public void setMoveListPlayer1(String move)
   {
+    //TODO Replace roundNumber with currmove
+    //this.moveListPlayer1.put(this.getRoundNumber(), move);
     this.moveListPlayer1.put(this.currMove - 1, move);
+
   }
 
   public HashMap<Integer, String> getMoveListPlayer2()
@@ -116,9 +119,13 @@ public class GameState
     return moveListPlayer2;
   }
 
+
   public void setMoveListPlayer2(String move)
   {
+    //TODO Replace roundNumber with currmove
+    //this.moveListPlayer2.put(this.getRoundNumber(), move);
     this.moveListPlayer2.put(this.currMove - 1, move);
+
   }
 
   public boolean isGameOver()
