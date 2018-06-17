@@ -30,6 +30,9 @@ public class Main
   private void startServer(int port, String playerName) {
     server = new Server(port);
     GameGlobal.setPlayerName(playerName);
+    if (port == 4443) {
+      GameGlobal.setPlayerNumber(3);
+    }
     ServletContextHandler context = createRootContext();
     context.addEventListener(new InitGuiceContextListener());
     context.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
