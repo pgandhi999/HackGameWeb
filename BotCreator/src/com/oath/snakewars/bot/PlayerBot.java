@@ -10,6 +10,6 @@ public class PlayerBot implements Bot
   @Override
   public MoveType makeMove(BotState botState)
   {
-    return null;
+    return MoveType.LEFT;
   }
 }
