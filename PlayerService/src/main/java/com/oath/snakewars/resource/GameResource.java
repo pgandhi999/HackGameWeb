@@ -96,6 +96,9 @@ public class GameResource
       return null;
     }
     GameBoardState gameBoardState = new GameBoardState(SettingsProvider.getGameBoard());
+    if (GameGlobal.getPlayerNumber() == 3) {
+      gameBoardState.swapPlayerCells();
+    }
     BotHandler botHandler = new BotHandler(gameBoardState);
     logger.info("Requested next move endpoint");
     return botHandler.fetchNextMove();
