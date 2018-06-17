@@ -37,6 +37,7 @@ public class PlayerBot implements Bot
         }
       }
     }
+    ArrayList<GameTreeNode> children0 = new ArrayList<GameTreeNode>();
     GameTreeNode g1 = g0.clone();
     boolean isValid = validateMove(g1, i1 - 1, j1);
     if (isValid) {
@@ -44,6 +45,7 @@ public class PlayerBot implements Bot
       g1.setBoard(i1 - 1, j1, 2);
       g1.setMove(0);
       bfs1.add(g1);
+      children0.add(g1);
     }
     GameTreeNode g2 = g0.clone();
     isValid = validateMove(g2, i1 + 1, j1);
@@ -52,6 +54,7 @@ public class PlayerBot implements Bot
       g2.setBoard(i1 + 1, j1, 2);
       g2.setMove(1);
       bfs1.add(g2);
+      children0.add(g2);
     }
     GameTreeNode g3 = g0.clone();
     isValid = validateMove(g3, i1, j1 - 1);
@@ -60,6 +63,7 @@ public class PlayerBot implements Bot
       g3.setBoard(i1, j1 - 1, 2);
       g3.setMove(2);
       bfs1.add(g3);
+      children0.add(g3);
     }
     GameTreeNode g4 = g0.clone();
     isValid = validateMove(g4, i1, j1 + 1);
@@ -68,7 +72,9 @@ public class PlayerBot implements Bot
       g4.setBoard(i1, j1 + 1, 2);
       g4.setMove(3);
       bfs1.add(g4);
+      children0.add(g4);
     }
+    g0.setChildren(children0);
 
     for(int i=0; i<bfs1.size();i++){
       GameTreeNode gt = bfs1.get(i);
@@ -80,6 +86,7 @@ public class PlayerBot implements Bot
           }
         }
       }
+      ArrayList<GameTreeNode> children = new ArrayList<GameTreeNode>();
       GameTreeNode gt1 = gt.clone();
       isValid = validateMove(gt1, i1 - 1, j1);
       if (isValid) {
@@ -90,6 +97,7 @@ public class PlayerBot implements Bot
         gt1.setScore(100);
       }
       bfs2.add(gt1);
+      children.add(gt1);
       GameTreeNode gt2 = gt.clone();
       isValid = validateMove(gt2, i1 + 1, j1);
       if (isValid) {
@@ -100,6 +108,7 @@ public class PlayerBot implements Bot
         gt2.setScore(100);
       }
       bfs2.add(gt2);
+      children.add(gt2);
       GameTreeNode gt3 = gt.clone();
       isValid = validateMove(gt3, i1, j1 - 1);
       if (isValid) {
@@ -110,6 +119,7 @@ public class PlayerBot implements Bot
         gt3.setScore(100);
       }
       bfs2.add(gt3);
+      children.add(gt3);
       GameTreeNode gt4 = gt.clone();
       isValid = validateMove(gt4, i1, j1 + 1);
       if (isValid) {
@@ -120,6 +130,8 @@ public class PlayerBot implements Bot
         gt4.setScore(100);
       }
       bfs2.add(gt4);
+      children.add(gt4);
+      gt.setChildren(children);
     }
 
     for(int i=0; i<bfs2.size();i++){
@@ -132,6 +144,7 @@ public class PlayerBot implements Bot
           }
         }
       }
+      ArrayList<GameTreeNode> children1 = new ArrayList<GameTreeNode>();
       GameTreeNode gt1 = gt.clone();
       isValid = validateMove(gt1, i1 - 1, j1);
       if (isValid) {
@@ -139,6 +152,7 @@ public class PlayerBot implements Bot
         gt1.setBoard(i1 - 1, j1, 2);
         gt1.setMove(0);
         bfs3.add(gt1);
+        children1.add(gt1);
       }
       GameTreeNode gt2 = gt.clone();
       isValid = validateMove(gt2, i1 + 1, j1);
@@ -147,6 +161,7 @@ public class PlayerBot implements Bot
         gt2.setBoard(i1 + 1, j1, 2);
         gt2.setMove(1);
         bfs3.add(gt2);
+        children1.add(gt2);
       }
       GameTreeNode gt3 = gt.clone();
       isValid = validateMove(gt3, i1, j1 - 1);
@@ -155,6 +170,7 @@ public class PlayerBot implements Bot
         gt3.setBoard(i1, j1 - 1, 2);
         gt3.setMove(2);
         bfs3.add(gt3);
+        children1.add(gt3);
       }
       GameTreeNode gt4 = gt.clone();
       isValid = validateMove(gt1, i1, j1 + 1);
@@ -163,7 +179,9 @@ public class PlayerBot implements Bot
         gt4.setBoard(i1, j1 + 1, 2);
         gt4.setMove(3);
         bfs3.add(gt4);
+        children1.add(gt4);
       }
+      gt.setChildren(children1);
     }
 
     for(int i = 0;i < bfs3.size(); i++) {
@@ -194,7 +212,49 @@ public class PlayerBot implements Bot
       }
       gt.setScore(score);
     }
-    return MoveType.LEFT;
+
+    for(int i = 0;i < bfs2.size(); i++) {
+      GameTreeNode gt = bfs2.get(i);
+      int maxScore = 0;
+      for(int j=0;j<gt.getChildren().size();j++) {
+        if (gt.getChildren().get(j).getScore() > maxScore) {
+          maxScore = gt.getChildren().get(j).getScore();
+        }
+      }
+      gt.setScore(maxScore);
+    }
+
+    for(int i = 0;i < bfs1.size(); i++) {
+      GameTreeNode gt = bfs1.get(i);
+      int minScore = 200;
+      for(int j=0;j<gt.getChildren().size();j++) {
+        if (gt.getChildren().get(j).getScore() < minScore) {
+          minScore = gt.getChildren().get(j).getScore();
+        }
+      }
+      gt.setScore(minScore);
+    }
+
+    int maxScore = 0;
+    int move = 0;
+    for(int j=0;j<g0.getChildren().size();j++) {
+      if (g0.getChildren().get(j).getScore() > maxScore) {
+        maxScore = g0.getChildren().get(j).getScore();
+        move = g0.getChildren().get(j).getMove();
+      }
+    }
+    g0.setScore(maxScore);
+    MoveType mt = MoveType.PASS;
+    if (move == 0) {
+      mt = MoveType.UP;
+    } else if (move == 1) {
+      mt = MoveType.DOWN;
+    } else if (move == 2) {
+      mt = MoveType.LEFT;
+    } else if (move == 3) {
+      mt = MoveType.RIGHT;
+    }
+    return mt;
   }
 
   public boolean validateMove(GameTreeNode g, int x, int y) {

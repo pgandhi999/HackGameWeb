@@ -6,6 +6,15 @@ public class GameTreeNode {
     private int [][] board = new int[16][16];
     private int score = -1;
     private int move = -1;
+    private ArrayList<GameTreeNode> children = new ArrayList<GameTreeNode>();
+
+    public ArrayList<GameTreeNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(ArrayList<GameTreeNode> children) {
+        this.children = children;
+    }
 
     public int getBoard(int x, int y) {
         return board[x][y];
