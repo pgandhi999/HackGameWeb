@@ -12,6 +12,12 @@ public class BotHandler
   public MoveType fetchNextMove() {
     BotState botState = new BotState(gameBoardState);
     GenericBot genericBot = new GenericBot();
-    return genericBot.makeMove(botState);
+    MoveType mt = MoveType.PASS;
+    try {
+      mt = genericBot.makeMove(botState);
+    } catch(Exception e) {
+      mt = MoveType.PASS;
+    }
+    return mt;
   }
 }

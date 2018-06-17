@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GenericBot implements Bot
 {
   private final static Logger logger = Logger.getLogger(GenericBot.class);
-  public MoveType makeMove(BotState botState)
+  public MoveType makeMove(BotState botState) throws Exception
   {
     logger.info("Returning generic move");
     GameBoardState gb = botState.getBoard();
