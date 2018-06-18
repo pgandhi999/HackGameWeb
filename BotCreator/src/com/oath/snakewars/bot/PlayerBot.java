@@ -8,7 +8,7 @@ public class PlayerBot implements Bot
    * This is where all the magic happens. Implement the method to make your bot smarter.
    */
   @Override
-  public MoveType makeMove(BotState botState)
+  public MoveType makeMove(BotState botState) throws Exception
   {
     return MoveType.LEFT;
   }

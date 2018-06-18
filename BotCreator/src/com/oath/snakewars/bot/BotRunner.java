@@ -90,7 +90,12 @@ public class BotRunner
   private static void requestMove (Bot playerBot, BotState botState) {
     System.out.println("\n Requesting your move ..");
     long startTime = System.currentTimeMillis();
-    MoveType yourMove = playerBot.makeMove(botState);
+    MoveType yourMove = MoveType.PASS;
+    try {
+      yourMove = playerBot.makeMove(botState);
+    } catch(Exception e) {
+      yourMove = MoveType.PASS;
+    }
     long endTime = System.currentTimeMillis();
     long timeTaken = endTime - startTime;
     System.out.println("Your bot moved " + yourMove.name() + " in " + timeTaken + " ms.");
