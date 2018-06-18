@@ -1,7 +1,6 @@
 package com.oath.common.snakewars.settings;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oath.common.snakewars.board.Cell;
 
 public class GameBoardState
@@ -9,8 +8,8 @@ public class GameBoardState
   private final int boardWidth;
   private final int boardHeight;
   private final int board[][];
-  private Cell currentCellPlayer1;
-  private Cell currentCellPlayer2;
+  private Cell myCurrentCell;
+  private Cell enemyCurrentCell;
 
   @JsonCreator
   public GameBoardState (GameBoard gameBoard) {
@@ -22,8 +21,8 @@ public class GameBoardState
         board[i][j] = gameBoard.getCellContent(i,j);
       }
     }
-    currentCellPlayer1 = gameBoard.getCurrentCellPlayer1();
-    currentCellPlayer2 = gameBoard.getCurrentCellPlayer2();
+    myCurrentCell = gameBoard.getCurrentCellPlayer1();
+    enemyCurrentCell = gameBoard.getCurrentCellPlayer2();
 
   }
   public int getBoardWidth() {
@@ -37,13 +36,18 @@ public class GameBoardState
   public int getCellContent(int x, int y) {
     return board[x][y];
   }
-  public Cell getCurrentCellPlayer1()
-  {
-    return currentCellPlayer1;
+
+  public void swapPlayerCells () {
+    board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.PLAYER2;
+    board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.PLAYER1;
   }
-  public Cell getCurrentCellPlayer2()
+  public Cell getMyCurrentCell()
   {
-    return currentCellPlayer2;
+    return myCurrentCell;
+  }
+  public Cell getEnemyCurrentCell()
+  {
+    return enemyCurrentCell;
   }
 }
 
