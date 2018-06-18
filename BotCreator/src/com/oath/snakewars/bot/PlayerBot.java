@@ -1,6 +1,9 @@
 package com.oath.snakewars.bot;
 
+import com.oath.common.snakewars.board.Cell;
 import com.oath.common.snakewars.board.MoveType;
+import com.oath.common.snakewars.settings.GameBoardState;
+
 import java.util.ArrayList;
 
 public class PlayerBot implements Bot
@@ -38,7 +41,7 @@ public class PlayerBot implements Bot
       }
     }
     ArrayList<GameTreeNode> children0 = new ArrayList<GameTreeNode>();
-    GameTreeNode g1 = g0.clone();
+    GameTreeNode g1 = (GameTreeNode) g0.clone();
     boolean isValid = validateMove(g1, i1 - 1, j1);
     if (isValid) {
       g1.setBoard(i1, j1, 1);
@@ -47,7 +50,7 @@ public class PlayerBot implements Bot
       bfs1.add(g1);
       children0.add(g1);
     }
-    GameTreeNode g2 = g0.clone();
+    GameTreeNode g2 = (GameTreeNode) g0.clone();
     isValid = validateMove(g2, i1 + 1, j1);
     if (isValid) {
       g2.setBoard(i1, j1, 1);
@@ -56,7 +59,7 @@ public class PlayerBot implements Bot
       bfs1.add(g2);
       children0.add(g2);
     }
-    GameTreeNode g3 = g0.clone();
+    GameTreeNode g3 = (GameTreeNode)g0.clone();
     isValid = validateMove(g3, i1, j1 - 1);
     if (isValid) {
       g3.setBoard(i1, j1, 1);
@@ -65,7 +68,7 @@ public class PlayerBot implements Bot
       bfs1.add(g3);
       children0.add(g3);
     }
-    GameTreeNode g4 = g0.clone();
+    GameTreeNode g4 = (GameTreeNode)g0.clone();
     isValid = validateMove(g4, i1, j1 + 1);
     if (isValid) {
       g4.setBoard(i1, j1, 1);
@@ -87,7 +90,7 @@ public class PlayerBot implements Bot
         }
       }
       ArrayList<GameTreeNode> children = new ArrayList<GameTreeNode>();
-      GameTreeNode gt1 = gt.clone();
+      GameTreeNode gt1 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt1, i1 - 1, j1);
       if (isValid) {
         gt1.setBoard(i1, j1, 1);
@@ -98,7 +101,7 @@ public class PlayerBot implements Bot
       }
       bfs2.add(gt1);
       children.add(gt1);
-      GameTreeNode gt2 = gt.clone();
+      GameTreeNode gt2 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt2, i1 + 1, j1);
       if (isValid) {
         gt2.setBoard(i1, j1, 1);
@@ -109,7 +112,7 @@ public class PlayerBot implements Bot
       }
       bfs2.add(gt2);
       children.add(gt2);
-      GameTreeNode gt3 = gt.clone();
+      GameTreeNode gt3 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt3, i1, j1 - 1);
       if (isValid) {
         gt3.setBoard(i1, j1, 1);
@@ -120,7 +123,7 @@ public class PlayerBot implements Bot
       }
       bfs2.add(gt3);
       children.add(gt3);
-      GameTreeNode gt4 = gt.clone();
+      GameTreeNode gt4 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt4, i1, j1 + 1);
       if (isValid) {
         gt4.setBoard(i1, j1, 1);
@@ -136,16 +139,16 @@ public class PlayerBot implements Bot
 
     for(int i=0; i<bfs2.size();i++){
       GameTreeNode gt = bfs2.get(i);
-      for(int i=0; i<16; i++) {
+      for(int i2=0; i2<16; i2++) {
         for(int j=0; j<16; j++) {
-          if(gt.getBoard(i, j) == 2) {
-            i1=i;
+          if(gt.getBoard(i2, j) == 2) {
+            i1=i2;
             j1=j;
           }
         }
       }
       ArrayList<GameTreeNode> children1 = new ArrayList<GameTreeNode>();
-      GameTreeNode gt1 = gt.clone();
+      GameTreeNode gt1 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt1, i1 - 1, j1);
       if (isValid) {
         gt1.setBoard(i1, j1, 1);
@@ -154,7 +157,7 @@ public class PlayerBot implements Bot
         bfs3.add(gt1);
         children1.add(gt1);
       }
-      GameTreeNode gt2 = gt.clone();
+      GameTreeNode gt2 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt2, i1 + 1, j1);
       if (isValid) {
         gt2.setBoard(i1, j1, 1);
@@ -163,7 +166,7 @@ public class PlayerBot implements Bot
         bfs3.add(gt2);
         children1.add(gt2);
       }
-      GameTreeNode gt3 = gt.clone();
+      GameTreeNode gt3 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt3, i1, j1 - 1);
       if (isValid) {
         gt3.setBoard(i1, j1, 1);
@@ -172,7 +175,7 @@ public class PlayerBot implements Bot
         bfs3.add(gt3);
         children1.add(gt3);
       }
-      GameTreeNode gt4 = gt.clone();
+      GameTreeNode gt4 = (GameTreeNode)gt.clone();
       isValid = validateMove(gt1, i1, j1 + 1);
       if (isValid) {
         gt4.setBoard(i1, j1, 1);
@@ -186,10 +189,10 @@ public class PlayerBot implements Bot
 
     for(int i = 0;i < bfs3.size(); i++) {
       GameTreeNode gt = bfs3.get(i);
-      for(int i=0; i<16; i++) {
+      for(int i2=0; i2<16; i2++) {
         for(int j=0; j<16; j++) {
-          if(gt.getBoard(i, j) == 2) {
-            i1=i;
+          if(gt.getBoard(i2, j) == 2) {
+            i1=i2;
             j1=j;
           }
         }

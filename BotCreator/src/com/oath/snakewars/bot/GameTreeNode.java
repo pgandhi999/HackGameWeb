@@ -1,6 +1,7 @@
 package com.oath.snakewars.bot;
 
 import com.oath.common.snakewars.board.MoveType;
+import java.util.ArrayList;
 
 public class GameTreeNode {
     private int [][] board = new int[16][16];
@@ -38,5 +39,13 @@ public class GameTreeNode {
 
     public void setMove(int move) {
         this.move = move;
+    }
+
+    public Object clone() {
+        try {
+            super.clone();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
