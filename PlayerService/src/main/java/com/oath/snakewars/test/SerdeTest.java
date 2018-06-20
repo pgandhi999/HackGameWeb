@@ -25,8 +25,8 @@ public class SerdeTest
     //GameUpdateTest gut = new GameUpdateTest(2,g);
     GameUpdate gut = new GameUpdate(2,g);
 
-    gut.getGameBoard().getTestBoard();
-    gut.getGameBoard().setTestboard(3);
+    //gut.getGameBoard().getTestBoard();
+    //gut.getGameBoard().setTestboard(3);
     //gut.setTest(100);
     String str = objectMapper.writeValueAsString(gut);
     InputStream targetStream = new ByteArrayInputStream(str.getBytes());
@@ -34,7 +34,7 @@ public class SerdeTest
     GameUpdate gudash = objectMapper.readValue(targetStream,GameUpdate.class);
     //GameUpdateTest gudash = objectMapper.readValue(targetStream,GameUpdateTest.class);
 
-    gudash.getGameBoard().getTestBoard();
+    //gudash.getGameBoard().getTestBoard();
   }
 }
 
