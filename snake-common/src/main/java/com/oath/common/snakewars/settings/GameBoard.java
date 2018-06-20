@@ -14,8 +14,7 @@ public class GameBoard
   public Cell currentCellPlayer1;
   @JsonProperty
   public Cell currentCellPlayer2;
-  @JsonProperty
-  public int testboard;
+
 
   @JsonCreator
   public GameBoard (
@@ -24,7 +23,6 @@ public class GameBoard
     this.boardHeight = boardHeight;
     this.boardWidth = boardWidth;
     this.board = new int[boardHeight][boardWidth];
-    testboard = 6;
     for (int i=0; i<boardHeight; i++) {
       for (int j=0; j<boardWidth; j++) {
         board[i][j] = CellType.EMPTY;
@@ -78,12 +76,5 @@ public class GameBoard
         System.out.print(board[i][j] + " ");
       }
     }
-  }
-  public void getTestBoard() {
-        System.out.print("-->"+testboard + "!~~~");
-  }
-
-  public void setTestboard(int x) {
-    testboard = x;
   }
 }
