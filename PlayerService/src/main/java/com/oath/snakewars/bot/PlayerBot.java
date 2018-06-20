@@ -28,7 +28,7 @@ public class PlayerBot implements Bot
     for(int i=0; i<board.getBoardWidth(); i++) {
       for(int j=0; j<board.getBoardHeight(); j++) {
         g0.setBoard(i, j, playerBoard[i][j]);
-        if(playerBoard[i][j]==3){
+        if(playerBoard[i][j]==1){
           System.out.println("hereeeeee WALLLLLLLLLLLLLL" +i+" "+j);
         }
       }
@@ -271,12 +271,12 @@ public class PlayerBot implements Bot
   }
 
   public boolean validateMove(GameTreeNode g, int x, int y) {
-    System.out.println("Hereeeeeee VALIDATE "+x+" "+y);
+    //System.out.println("Hereeeeeee VALIDATE "+x+" "+y);
     if (x < 0 || x > board.getBoardWidth() - 1 || y < 0 || y > board.getBoardWidth() - 1) {
       return false;
     }
     int pos = g.getBoard(x, y);
-    System.out.println("Hereeeeeee VALIDATE 2 "+pos);
+    //System.out.println("Hereeeeeee VALIDATE 2 "+pos);
     if (pos == 1 || pos == 2 || pos == 3) {
       return false;
     }
