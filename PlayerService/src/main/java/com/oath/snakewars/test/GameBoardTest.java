@@ -1,28 +1,31 @@
-package com.oath.common.snakewars.settings;
+package com.oath.snakewars.test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oath.common.snakewars.board.Cell;
+import com.oath.common.snakewars.settings.CellType;
 
-public class GameBoard
+public class GameBoardTest
 {
-  public final int boardWidth;
-  public final int boardHeight;
+  private final int boardWidth;
+  private final int boardHeight;
   @JsonProperty
-  public int board[][];
+  private int board[][];
   @JsonProperty
-  public Cell currentCellPlayer1;
+  private Cell currentCellPlayer1;
   @JsonProperty
-  public Cell currentCellPlayer2;
-
+  private Cell currentCellPlayer2;
+  @JsonProperty
+  private int testboard;
 
   @JsonCreator
-  public GameBoard (
+  public GameBoardTest (
       @JsonProperty("boardHeight") int boardHeight,
       @JsonProperty("boardWidth") int boardWidth) {
     this.boardHeight = boardHeight;
     this.boardWidth = boardWidth;
     this.board = new int[boardHeight][boardWidth];
+    testboard = 6;
     for (int i=0; i<boardHeight; i++) {
       for (int j=0; j<boardWidth; j++) {
         board[i][j] = CellType.EMPTY;
@@ -53,9 +56,9 @@ public class GameBoard
     board[x][y] = z;
   }
   public Cell getCurrentCellPlayer1()
-{
-  return currentCellPlayer1;
-}
+  {
+    return currentCellPlayer1;
+  }
   public void setCurrentCellPlayer1(Cell currentCell) {
     this.currentCellPlayer1 = currentCell;
   }
@@ -76,5 +79,12 @@ public class GameBoard
         System.out.print(board[i][j] + " ");
       }
     }
+  }
+  public void getTestBoard() {
+    System.out.print("-->"+testboard + "!~~~");
+  }
+
+  public void setTestboard(int x) {
+    testboard = x;
   }
 }
