@@ -12,7 +12,6 @@ public class PlayerBot implements Bot
    * This is where all the magic happens. Implement the method to make your bot smarter.
    */
   GameBoardState board = null;
-  @Override
   public MoveType makeMove(BotState botState) throws Exception
   {
     ArrayList<GameTreeNode> bfs1 = new ArrayList<GameTreeNode>();
@@ -22,13 +21,16 @@ public class PlayerBot implements Bot
     int [][] playerBoard = new int[board.getBoardWidth()][board.getBoardHeight()];
     for(int i=0; i<board.getBoardWidth(); i++) {
       for(int j=0; j<board.getBoardHeight(); j++) {
-        playerBoard[i][j] = board.getCellContent(new Cell(i, j));
+        playerBoard[i][j] = board.getCellContent(i, j);
       }
     }
     GameTreeNode g0 = new GameTreeNode();
     for(int i=0; i<board.getBoardWidth(); i++) {
       for(int j=0; j<board.getBoardHeight(); j++) {
         g0.setBoard(i, j, playerBoard[i][j]);
+        if(playerBoard[i][j]==3){
+          System.out.println("hereeeeee WALLLLLLLLLLLLLL" +i+" "+j);
+        }
       }
     }
     int i1=0;
@@ -41,6 +43,7 @@ public class PlayerBot implements Bot
         }
       }
     }
+    System.out.println("Hereeeeeeeeee$$$$$$$$$$$$$$$$$$ "+i1 + " : " +j1);
     ArrayList<GameTreeNode> children0 = new ArrayList<GameTreeNode>();
     GameTreeNode g1 = (GameTreeNode) g0.clone();
     boolean isValid = validateMove(g1, i1 - 1, j1);
@@ -268,10 +271,12 @@ public class PlayerBot implements Bot
   }
 
   public boolean validateMove(GameTreeNode g, int x, int y) {
+    System.out.println("Hereeeeeee VALIDATE "+x+" "+y);
     if (x < 0 || x > board.getBoardWidth() - 1 || y < 0 || y > board.getBoardWidth() - 1) {
       return false;
     }
     int pos = g.getBoard(x, y);
+    System.out.println("Hereeeeeee VALIDATE 2 "+pos);
     if (pos == 1 || pos == 2 || pos == 3) {
       return false;
     }
