@@ -38,8 +38,8 @@ public class GameBoardState
   }
 
   public void swapPlayerCells () {
-    board[enemyCurrentCell.getX()][enemyCurrentCell.getY()] = CellType.PLAYER2;
-    board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.PLAYER1;
+    board[enemyCurrentCell.getX()][enemyCurrentCell.getY()] = CellType.PLAYER1;
+    board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.PLAYER2;
   }
   public Cell getMyCurrentCell()
   {
