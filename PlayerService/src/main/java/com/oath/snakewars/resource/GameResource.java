@@ -80,6 +80,8 @@ public class GameResource
     SettingsProvider.updateGameBoard(gameUpdate.getGameBoard());
     System.out.println(GameGlobal.getPlayerName()+":Round number Settings"+SettingsProvider.getCurrentRound());
     System.out.println(GameGlobal.getPlayerName()+" Round number gameUpdate"+gameUpdate.getRoundNumber());
+    //Uncomment if the board needs to be displayed
+    //gameUpdate.getGameBoard().displayGameBoard();
     if (SettingsProvider.getCurrentRound() == gameUpdate.getRoundNumber()) {
       return Response.ok(ImmutableMap.of("receivedUpdate", true)).build();
     }
