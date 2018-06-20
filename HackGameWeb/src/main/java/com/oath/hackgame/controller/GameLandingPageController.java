@@ -106,13 +106,16 @@ public class GameLandingPageController
     ), initialSettings);
     List<PlayerInfo> playerInfoList = new ArrayList<PlayerInfo>();
     List<String> playerNameList = new ArrayList<String>();
-    for(Map.Entry<String,String> entry:playerNames.entrySet()){
-      PlayerInfo player = new PlayerInfo(entry.getValue(), entry.getKey());
-    playerInfoList.add(player);
-    playerNameList.add(entry.getValue());
-  }
-    moveManager.addPlayers(playerInfoList);
-    return playerNameList;
+    //for(Map.Entry<String,String> entry:playerNames.entrySet()){
+
+      PlayerInfo playerInfo1 = new PlayerInfo(playerNames.get(completePlayer1Url), completePlayer1Url);
+      playerInfoList.add(playerInfo1);
+      PlayerInfo playerInfo2 = new PlayerInfo(playerNames.get(completePlayer2Url), completePlayer2Url);
+      playerInfoList.add(playerInfo2);
+      playerNameList.add(playerInfo1.getPlayerName());
+      playerNameList.add(playerInfo2.getPlayerName());
+      moveManager.addPlayers(playerInfoList);
+      return playerNameList;
   }
 
   @RequestMapping(value = "/startGame", method = RequestMethod.POST)
