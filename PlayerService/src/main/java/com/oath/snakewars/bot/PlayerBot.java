@@ -28,8 +28,8 @@ public class PlayerBot implements Bot
     for(int i=0; i<board.getBoardWidth(); i++) {
       for(int j=0; j<board.getBoardHeight(); j++) {
         g0.setBoard(i, j, playerBoard[i][j]);
-        if(playerBoard[i][j]==1){
-          System.out.println("hereeeeee WALLLLLLLLLLLLLL" +i+" "+j);
+        if(playerBoard[i][j]==3){
+          System.out.println("hereeeeee ENEMYYYYYYYYY" +i+" "+j);
         }
       }
     }
@@ -43,7 +43,7 @@ public class PlayerBot implements Bot
         }
       }
     }
-    System.out.println("Hereeeeeeeeee$$$$$$$$$$$$$$$$$$ "+i1 + " : " +j1);
+    System.out.println("Hereeeeeeeeee SELFFFF$$$$$$$$$$$$$$$$$$ "+i1 + " : " +j1);
     ArrayList<GameTreeNode> children0 = new ArrayList<GameTreeNode>();
     GameTreeNode g1 = (GameTreeNode) g0.clone();
     boolean isValid = validateMove(g1, i1 - 1, j1);

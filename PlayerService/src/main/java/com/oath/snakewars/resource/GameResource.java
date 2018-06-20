@@ -98,7 +98,9 @@ public class GameResource
       return null;
     }
     GameBoardState gameBoardState = new GameBoardState(SettingsProvider.getGameBoard());
+    System.out.println("hereeeeeee WAY BEFORE SWAPPPPPPPPPPP%%%%%%");
     if (GameGlobal.getPlayerNumber() == 3) {
+      System.out.println("hereeeeeee JUST BEFORE SWAPPPPPPPPPPP%%%%%%");
       gameBoardState.swapPlayerCells();
     }
     BotHandler botHandler = new BotHandler(gameBoardState);
