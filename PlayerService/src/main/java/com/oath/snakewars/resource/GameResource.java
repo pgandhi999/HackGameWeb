@@ -99,6 +99,7 @@ public class GameResource
     }
     GameBoardState gameBoardState = new GameBoardState(SettingsProvider.getGameBoard());
     if (GameGlobal.getPlayerNumber() == 3) {
+      logger.info(GameGlobal.getPlayerName()+" calling swap");
       gameBoardState.swapPlayerCells();
     }
     BotHandler botHandler = new BotHandler(gameBoardState);

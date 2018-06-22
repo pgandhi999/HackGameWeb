@@ -7,7 +7,7 @@ public class GameBoardState
 {
   private final int boardWidth;
   private final int boardHeight;
-  private final int board[][];
+  private int board[][];
   private Cell myCurrentCell;
   private Cell enemyCurrentCell;
 
@@ -38,8 +38,19 @@ public class GameBoardState
   }
 
   public void swapPlayerCells () {
+
+    /*System.out.println("Current Value at my cell is: "+myCurrentCell.getX()+ " "+myCurrentCell.getY());
+    System.out.println("Current Value at enemy cell is: "+enemyCurrentCell.getX()+ " "+enemyCurrentCell.getY());*/
     board[enemyCurrentCell.getX()][enemyCurrentCell.getY()] = CellType.PLAYER1;
     board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.PLAYER2;
+    Cell tempCell = new Cell(myCurrentCell.getX(),myCurrentCell.getY());
+    myCurrentCell.setX(enemyCurrentCell.getX());
+    myCurrentCell.setY(enemyCurrentCell.getY());
+    enemyCurrentCell.setX(tempCell.getX());
+    enemyCurrentCell.setY(tempCell.getY());
+    /*System.out.println("Swapped Value at my cell is: "+myCurrentCell.getX()+ " "+myCurrentCell.getY());
+    System.out.println("Swapped Value at enemy cell is: "+enemyCurrentCell.getX()+ " "+enemyCurrentCell.getY());*/
+
   }
   public Cell getMyCurrentCell()
   {
