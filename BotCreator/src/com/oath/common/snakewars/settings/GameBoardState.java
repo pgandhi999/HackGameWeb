@@ -4,6 +4,9 @@ import com.oath.common.snakewars.board.Cell;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+/*
+ * This class has all the information specific to the current Game board state
+ */
 public class GameBoardState
 {
   private final int GAME_BOARD_HEIGHT = 16;
@@ -11,11 +14,12 @@ public class GameBoardState
   private final int boardWidth;
   private final int boardHeight;
   private final int board[][];
+
   private Cell myCurrentCell;
   private Cell enemyCurrentCell;
 
   /*
-   * Generates an empty board with random cells assigned to both players
+   * Generates an empty board of size 16x16 with random cells assigned to both players
    */
   public GameBoardState()
   {
@@ -27,19 +31,29 @@ public class GameBoardState
         board[i][j] = CellType.EMPTY.getValue();
       }
     }
-    myCurrentCell = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
-                             ThreadLocalRandom.current().nextInt(0, 16));
-    enemyCurrentCell = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
-                                ThreadLocalRandom.current().nextInt(0, 16));
+    myCurrentCell = new Cell(
+        ThreadLocalRandom.current().nextInt(0, 16),
+        ThreadLocalRandom.current().nextInt(0, 16)
+    );
+    enemyCurrentCell = new Cell(
+        ThreadLocalRandom.current().nextInt(0, 16),
+        ThreadLocalRandom.current().nextInt(0, 16)
+    );
     while (myCurrentCell.equals(enemyCurrentCell)) {
-      enemyCurrentCell = new Cell(ThreadLocalRandom.current().nextInt(0, 16),
-                                  ThreadLocalRandom.current().nextInt(0, 16));
+      enemyCurrentCell = new Cell(
+          ThreadLocalRandom.current().nextInt(0, 16),
+          ThreadLocalRandom.current().nextInt(0, 16)
+      );
     }
     setCellContent(myCurrentCell, CellType.MYCELL.getValue());
     setCellContent(enemyCurrentCell, CellType.ENEMYCELL.getValue());
   }
 
-  public GameBoardState (int boardHeight, int boardWidth ) {
+  /*
+   * Generates an empty board with the specified height and width
+   */
+  public GameBoardState(int boardHeight, int boardWidth)
+  {
     this.boardHeight = boardHeight;
     this.boardWidth = boardWidth;
     this.board = new int[boardHeight][boardWidth];
@@ -60,25 +74,37 @@ public class GameBoardState
     return boardHeight;
   }
 
+  /*
+   * Returns the CellType content of the cell
+   */
   public int getCellContent(Cell position)
   {
     return board[position.getX()][position.getY()];
   }
 
+  /*
+   * Returns the coordinates of your current position on the board
+   */
   public Cell getMyCurrentCell()
   {
     return myCurrentCell;
   }
 
+  /*
+   * Returns the coordinates of the enemy current position on the board
+   */
   public Cell getEnemyCurrentCell()
   {
     return enemyCurrentCell;
   }
 
   /*
-   *  Used only for BotRunner helper
+   *  Used only by BotRunner helper class to set specific cell types to position
+   *  Do not use this method in PlayerBot#makeMove as altering the
+   *  GameBoardState is not a supported operation on the game server
    */
-  public void setCellContent (Cell position, int cellType) {
+  public void setCellContent(Cell position, int cellType)
+  {
     board[position.getX()][position.getY()] = cellType;
   }
 }
