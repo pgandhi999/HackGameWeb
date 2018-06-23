@@ -2,6 +2,8 @@ var servletName = "HackGameWeb";
 var interval1;
 var line1 = null;
 var line2 = null;
+var player1name;
+var player2name;
 
 window.onload = function() {
     document.getElementById("player1line").style.visibility = "hidden";
@@ -18,11 +20,11 @@ function initGame() {
  	    	var player1y = obj.player1y;
  	    	var player2x = obj.player2x;
  	    	var player2y = obj.player2y;
- 	    	var player1name = obj.player1name;
- 	    	var player2name = obj.player2name;
+ 	    	player1name = obj.player1name;
+ 	    	player2name = obj.player2name;
  	    	document.getElementById("player1name").innerHTML = player1name;
  	    	document.getElementById("player2name").innerHTML = player2name;
- 	    	console.log("INIT GAME COORD "+player1x+" "+player1y+" "+player2x+" "+player2y);
+ 	    	console.log("INIT GAME COORD "+player1x+" "+player1y+" , "+player2x+" "+player2y);
  	    	initRender(player1x, player1y, player2x, player2y);
  	    }
  	}
@@ -78,7 +80,7 @@ function getCurrentState() {
  	xhttp=new XMLHttpRequest();
  	xhttp.onreadystatechange = function() {
  	    if (xhttp.readyState == 4 && xhttp.status == 200) {
- 	    	console.log("hereeeeeee 1 "+xhttp.responseText);
+ 	    	console.log("Get State " + xhttp.responseText);
  	    	var obj = JSON.parse(xhttp.responseText);
  	    	var isMoveOver = obj.isMoveOver;
  	    	if (isMoveOver) {
@@ -103,7 +105,13 @@ function getCurrentState() {
 }
 
 function declareWinner(winner) {
-	alert("Player "+winner+" wins");
+    if (winner == 1) {
+	  alert(player1name + " wins the match");
+	} else if (winner == 2) {
+	  alert(player2name + " wins the match");
+	} else {
+	  alert("This match is a draw");
+	}
 }
 
 function render(player1move, player2move) {

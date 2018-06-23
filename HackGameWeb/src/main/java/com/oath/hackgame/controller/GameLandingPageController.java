@@ -1,5 +1,7 @@
 package com.oath.hackgame.controller;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +36,9 @@ public class GameLandingPageController
   public String player2 = null;
   public GameState gs = null;
   public ObjectMapper objectMapper = new ObjectMapper();
-  public MoveManager moveManager = new MoveManager();
+  public MoveManager moveManager = null;
   public static final Object lock = new Object();
+  public FileWriter fw = null;
 
   @RequestMapping(value = "/getInitGameState", method = RequestMethod.POST)
   public void getInitGameState(HttpServletRequest request, HttpServletResponse response, ModelMap model)
@@ -59,14 +62,22 @@ public class GameLandingPageController
         initPlayer2Pos.setY(initPlayer2PosY);
       }
       List<String> playerNames = initializePlayerClient(initPlayer1Pos,initPlayer2Pos,gs);
-      //gs.setGameState(initPlayer2PosX, initPlayer2PosY, CellType.PLAYER2);
-      System.out.println("Board value at "+initPlayer1PosX+" "+initPlayer1PosY+" before is"+gs.getGameBoard().getCellContent(initPlayer1PosX,initPlayer1PosY));
       gs.setWholeGameState(initPlayer1Pos,initPlayer2Pos);
-      //System.out.println("Board value at x1 y1 after is"+gs.getGameBoard().getCellContent(initPlayer1PosX,initPlayer1PosY));
-      // TODO Try if this works
       HashMap<String, Object> playerProps = new HashMap<String, Object>();
       player1 = playerNames.get(0);
       player2 = playerNames.get(1);
+      File file = new File("/home/y/logs/yjava_jetty/MatchMoves-"+player1+"-"+player2+"-"+System.currentTimeMillis());
+      fw = new FileWriter(file, true);
+      String init1 = "Initial position for player 1 " + player1 + " is "
+              + initPlayer1Pos.getX() + " : " + initPlayer1Pos.getY();
+      System.out.println(init1);
+      String init2 = "Initial position for player 2 " + player2 + " is "
+              + initPlayer2Pos.getX() + " : " + initPlayer2Pos.getY();
+      System.out.println(init2);
+      fw.append(init1);
+      fw.append("\n");
+      fw.append(init2);
+      fw.append("\n");
       playerProps.put("player1name", player1);
       playerProps.put("player2name", player2);
       playerProps.put("player1x", initPlayer1Pos.getX());
@@ -144,10 +155,13 @@ public class GameLandingPageController
             pl1 = playerMove1;
             pl2 = playerMove2;
           }
-          System.out.println("SLEEPING GN");
           Thread.sleep(2000);
-          System.out.println("Got player1 moves as"+pl1.getMoveType().toString());
-          System.out.println("Got player2 moves as"+pl2.getMoveType().toString());
+          System.out.println("Got player1 moves as " + pl1.getMoveType().toString());
+          System.out.println("Got player2 moves as " + pl2.getMoveType().toString());
+          fw.append("Got player1 moves as " + pl1.getMoveType().toString());
+          fw.append("\n");
+          fw.append("Got player2 moves as " + pl2.getMoveType().toString());
+          fw.append("\n");
 
           if(pl1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Up.toString()) ||
                   pl1.getMoveType().toString().equalsIgnoreCase(Globals.moves.Down.toString()) ||
@@ -176,6 +190,11 @@ public class GameLandingPageController
         validatePlayerMovesAndUpdateGameState();
       }
       System.out.println("GAME OVER!!!");
+      if (fw != null) {
+        fw.append("GAME OVER!!!");
+        fw.append("\n");
+        fw.close();
+      }
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -282,7 +301,6 @@ public class GameLandingPageController
         movePlayer2 = currentRound != 0 ? gs.getMoveListPlayer2().get(currentRound - 1) : Globals.moves.Up.toString();
         gs.getMoveListPlayer2().put(currentRound, movePlayer2);
       }
-      System.out.println("hereeeeeeee 1 " + movePlayer1 + " " + movePlayer2);
       if (currentRound > 0) {
         if (movePlayer1.equalsIgnoreCase(Globals.moves.Up.toString())
                 && gs.getMoveListPlayer1().get(currentRound - 1).equalsIgnoreCase(Globals.moves.Down.toString())) {
@@ -341,7 +359,12 @@ public class GameLandingPageController
       }
       player1loses = validateMove(movePlayer1, x1, y1);
       player2loses = validateMove(movePlayer2, x2, y2);
-      System.out.println("Hereeeeeeeee 2 " + player1loses + " : " + player2loses);
+      System.out.println("Validated Move from player 1 is " + movePlayer1.toString());
+      System.out.println("Validated Move from player 2 is " + movePlayer2.toString());
+      fw.append("Validated Move from player 1 is " + movePlayer1.toString());
+      fw.append("\n");
+      fw.append("Validated Move from player 2 is " + movePlayer2.toString());
+      fw.append("\n");
       if (player1loses && player2loses) {
         gs.setWinner(0);
         gs.setGameOver(true);
@@ -415,7 +438,6 @@ public class GameLandingPageController
           Globals.moves.Down.toString()) && x + 1 > 15)
           || (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && y - 1 < 0)
           || (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && y + 1 > 15)) {
-        System.out.println("MOVE FAIL 1 "+x+" : "+y);
         return true;
       }
       if (movePlayer.equalsIgnoreCase(Globals.moves.Up.toString()) && (gs.getGameBoard(x - 1, y) == Globals.WALL_CELL
@@ -423,7 +445,6 @@ public class GameLandingPageController
                                                                           == Globals.CURR_POSITION_PLAYER_1
                                                                        || gs.getGameBoard(x - 1, y)
                                                                           == Globals.CURR_POSITION_PLAYER_2)) {
-        System.out.println("MOVE FAIL 2 "+x+" : "+y);
         return true;
       }
       if (movePlayer.equalsIgnoreCase(Globals.moves.Down.toString()) && (gs.getGameBoard(x + 1, y) == Globals.WALL_CELL
@@ -431,7 +452,6 @@ public class GameLandingPageController
                                                                             == Globals.CURR_POSITION_PLAYER_1
                                                                          || gs.getGameBoard(x + 1, y)
                                                                             == Globals.CURR_POSITION_PLAYER_2)) {
-        System.out.println("MOVE FAIL 3 "+x+" : "+y);
         return true;
       }
       if (movePlayer.equalsIgnoreCase(Globals.moves.Left.toString()) && (gs.getGameBoard(x, y - 1) == Globals.WALL_CELL
@@ -439,7 +459,6 @@ public class GameLandingPageController
                                                                             == Globals.CURR_POSITION_PLAYER_1
                                                                          || gs.getGameBoard(x, y - 1)
                                                                             == Globals.CURR_POSITION_PLAYER_2)) {
-        System.out.println("MOVE FAIL 4 "+x+" : "+y);
         return true;
       }
       if (movePlayer.equalsIgnoreCase(Globals.moves.Right.toString()) && (gs.getGameBoard(x, y + 1) == Globals.WALL_CELL
@@ -447,10 +466,8 @@ public class GameLandingPageController
                                                                              == Globals.CURR_POSITION_PLAYER_1
                                                                           || gs.getGameBoard(x, y + 1)
                                                                              == Globals.CURR_POSITION_PLAYER_2)) {
-        System.out.println("MOVE FAIL 5 "+x+" : "+y);
         return true;
       }
-      System.out.println("MOVE PASS");
       return false;
     }
     catch (Exception e) {
@@ -463,7 +480,15 @@ public class GameLandingPageController
   {
     gs.incrementRound();
     GameUpdate gameUpdate = new GameUpdate(gs.getRoundNumber(),gs.getGameBoard());
-    System.out.println("Incrementing round"+gameUpdate.getRoundNumber());
+    System.out.println("Incrementing round " + gameUpdate.getRoundNumber());
+    try {
+      if (fw != null) {
+        fw.append("Incrementing round " + gameUpdate.getRoundNumber());
+        fw.append("\n");
+      }
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
     moveManager.sendConfigAndMoveRequest(gameUpdate);
 
   }
@@ -478,7 +503,6 @@ public class GameLandingPageController
       }
       // TODO: Check if this works for you
       /* JSONObject jo = new JSONObject(); */
-      System.out.println("UI asking for next move...");
       HashMap<String, Object> playerProps = new HashMap<String, Object>();
       /*
        * jo.put( "player1currentmove",
@@ -527,6 +551,10 @@ public class GameLandingPageController
     player2 = null;
     gs = null;
     moveManager = null;
+    if (fw != null) {
+      fw.close();
+    }
+    fw = null;
     response.setContentType("text/plain");
     response.setHeader("Content-Type", "application/x-www-form-urlencoded");
     response.setHeader("Cache-Control", "no-cache");
