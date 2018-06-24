@@ -112,6 +112,7 @@ h1
 	left: 1300px;
 	top: 700px;
 	font-size: 30px;
+	color: red;
 }
 
 .player2name {
@@ -119,6 +120,7 @@ h1
 	left: 1300px;
 	top: 800px;
 	font-size: 30px;
+	color: blue;
 }
 
 .player1nameinner {
@@ -126,6 +128,7 @@ h1
 	left: 1450px;
 	top: 700px;
 	font-size: 30px;
+	color: red;
 }
 
 .player2nameinner {
@@ -133,6 +136,7 @@ h1
 	left: 1450px;
 	top: 800px;
 	font-size: 30px;
+	color: blue;
 }
 
 .roundnumber {

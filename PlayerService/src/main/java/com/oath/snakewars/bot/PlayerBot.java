@@ -43,7 +43,6 @@ public class PlayerBot implements Bot
       ArrayList<GameTreeNode> children0 = new ArrayList<GameTreeNode>();
       GameTreeNode g1 = (GameTreeNode) g0.clone();
       boolean isValid = validateMove(g1, i1 - 1, j1);
-      System.out.println("hereeeee 3 "+isValid);
       if (isValid) {
         g1.setBoard(i1, j1, 1);
         g1.setBoard(i1 - 1, j1, 2);
@@ -53,7 +52,6 @@ public class PlayerBot implements Bot
       }
       GameTreeNode g2 = (GameTreeNode) g0.clone();
       isValid = validateMove(g2, i1 + 1, j1);
-      System.out.println("hereeeee 2 "+isValid);
       if (isValid) {
         g2.setBoard(i1, j1, 1);
         g2.setBoard(i1 + 1, j1, 2);
@@ -63,7 +61,6 @@ public class PlayerBot implements Bot
       }
       GameTreeNode g3 = (GameTreeNode)g0.clone();
       isValid = validateMove(g3, i1, j1 - 1);
-      System.out.println("hereeeee 4 "+isValid);
       if (isValid) {
         g3.setBoard(i1, j1, 1);
         g3.setBoard(i1, j1 - 1, 2);
@@ -73,7 +70,6 @@ public class PlayerBot implements Bot
       }
       GameTreeNode g4 = (GameTreeNode)g0.clone();
       isValid = validateMove(g4, i1, j1 + 1);
-      System.out.println("hereeeee 5 "+isValid);
       if (isValid) {
         g4.setBoard(i1, j1, 1);
         g4.setBoard(i1, j1 + 1, 2);
@@ -245,9 +241,7 @@ public class PlayerBot implements Bot
       int maxScore = -1;
       int move = 0;
       for(int j=0;j<g0.getChildren().size();j++) {
-        System.out.println("hereeeee 66 "+g0.getChildren().get(j).getScore());
         if (g0.getChildren().get(j).getScore() > maxScore) {
-          System.out.println("hereeeee "+move);
           maxScore = g0.getChildren().get(j).getScore();
           move = g0.getChildren().get(j).getMove();
         }
