@@ -25,7 +25,7 @@ public class GameBoard
     this.board = new int[boardHeight][boardWidth];
     for (int i=0; i<boardHeight; i++) {
       for (int j=0; j<boardWidth; j++) {
-        board[i][j] = CellType.EMPTY;
+        board[i][j] = CellType.EMPTY.getValue();
       }
     }
     currentCellPlayer1 = new Cell(0,0);
@@ -41,8 +41,8 @@ public class GameBoard
   }
 
   public void updateGameBoard(Cell player1, Cell player2) {
-    board[player1.getX()][player1.getY()] = CellType.PLAYER1;
-    board[player2.getX()][player2.getY()] = CellType.PLAYER2;
+    board[player1.getX()][player1.getY()] = CellType.MYCELL.getValue();
+    board[player2.getX()][player2.getY()] = CellType.ENEMYCELL.getValue();
     setCurrentCellPlayer1(player1);
     setCurrentCellPlayer2(player2);
   }
