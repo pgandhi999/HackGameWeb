@@ -3,6 +3,8 @@ package com.oath.common.snakewars.settings;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.oath.common.snakewars.board.Cell;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class GameBoardState
 {
   private final int boardWidth;
@@ -25,6 +27,45 @@ public class GameBoardState
     enemyCurrentCell = gameBoard.getCurrentCellPlayer2();
 
   }
+
+  public GameBoardState()
+  {
+    this.boardHeight = 16;
+    this.boardWidth = 16;
+    this.board = new int[boardHeight][boardWidth];
+    for (int i = 0; i < boardHeight; i++) {
+      for (int j = 0; j < boardWidth; j++) {
+        board[i][j] = CellType.EMPTY.getValue();
+      }
+    }
+    myCurrentCell = new Cell(
+        ThreadLocalRandom.current().nextInt(0, 16),
+        ThreadLocalRandom.current().nextInt(0, 16)
+    );
+    enemyCurrentCell = new Cell(
+        ThreadLocalRandom.current().nextInt(0, 16),
+        ThreadLocalRandom.current().nextInt(0, 16)
+    );
+    while (myCurrentCell.equals(enemyCurrentCell)) {
+      enemyCurrentCell = new Cell(
+          ThreadLocalRandom.current().nextInt(0, 16),
+          ThreadLocalRandom.current().nextInt(0, 16)
+      );
+    }
+    setCellContent(myCurrentCell, CellType.MYCELL.getValue());
+    setCellContent(enemyCurrentCell, CellType.ENEMYCELL.getValue());
+  }
+  public GameBoardState(int boardHeight, int boardWidth)
+  {
+    this.boardHeight = boardHeight;
+    this.boardWidth = boardWidth;
+    this.board = new int[boardHeight][boardWidth];
+    for (int i = 0; i < boardHeight; i++) {
+      for (int j = 0; j < boardWidth; j++) {
+        board[i][j] = CellType.EMPTY.getValue();
+      }
+    }
+  }
   public int getBoardWidth() {
     return boardWidth;
   }
@@ -33,16 +74,16 @@ public class GameBoardState
     return boardHeight;
   }
 
-  public int getCellContent(int x, int y) {
-    return board[x][y];
+  public int getCellContent(Cell cell) {
+    return board[cell.getX()][cell.getY()];
   }
 
   public void swapPlayerCells () {
 
     /*System.out.println("Current Value at my cell is: "+myCurrentCell.getX()+ " "+myCurrentCell.getY());
     System.out.println("Current Value at enemy cell is: "+enemyCurrentCell.getX()+ " "+enemyCurrentCell.getY());*/
-    board[enemyCurrentCell.getX()][enemyCurrentCell.getY()] = CellType.PLAYER1;
-    board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.PLAYER2;
+    board[enemyCurrentCell.getX()][enemyCurrentCell.getY()] = CellType.MYCELL.getValue();
+    board[myCurrentCell.getX()][myCurrentCell.getY()] = CellType.ENEMYCELL.getValue();
     Cell tempCell = new Cell(myCurrentCell.getX(),myCurrentCell.getY());
     myCurrentCell.setX(enemyCurrentCell.getX());
     myCurrentCell.setY(enemyCurrentCell.getY());
@@ -59,6 +100,18 @@ public class GameBoardState
   public Cell getEnemyCurrentCell()
   {
     return enemyCurrentCell;
+  }
+  public void setMyCurrentCell(Cell inputCell)
+  {
+    myCurrentCell = new Cell(inputCell.getX(),inputCell.getY());
+  }
+  public void setEnemyCurrentCell(Cell inputCell)
+  {
+    enemyCurrentCell = new Cell(inputCell.getX(),inputCell.getY());
+  }
+  public void setCellContent(Cell position, int cellType)
+  {
+    board[position.getX()][position.getY()] = cellType;
   }
 }
 
