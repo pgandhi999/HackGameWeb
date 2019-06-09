@@ -16,6 +16,7 @@ public class GameSettings
   private List<String> playerNames;
   private final String selfBotName;
   private final int botId;
+  private final int trapCellCount;
   private final GameBoard gameBoard;
   public int getTimeBank()
   {
@@ -47,6 +48,12 @@ public class GameSettings
     return botId;
   }
 
+  public int getTrapCellCount()
+  {
+    return trapCellCount;
+  }
+
+
   public GameBoard getGameBoard()
   {
     return gameBoard;
@@ -68,7 +75,8 @@ public class GameSettings
       @JsonProperty("selfBotName") String selfBotName,
       @JsonProperty("botId") int botId,
       @JsonProperty("boardHeight") int boardHeight,
-      @JsonProperty("boardWidth") int boardWidth
+      @JsonProperty("boardWidth") int boardWidth,
+      @JsonProperty("trapCellCount") int trapCellCount
   )
   {
     this.timeBank = timeBank;
@@ -77,6 +85,7 @@ public class GameSettings
     this.playerNames = new ArrayList<String>();
     this.selfBotName = selfBotName;
     this.botId = botId;
-    this.gameBoard = new GameBoard(boardHeight, boardWidth);
+    this.gameBoard = new GameBoard(boardHeight, boardWidth, trapCellCount);
+    this.trapCellCount = trapCellCount;
   }
 }

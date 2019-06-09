@@ -14,7 +14,8 @@ public enum CellType
   EMPTY(0),
   WALL(1),
   MYCELL(2),
-  ENEMYCELL(3);
+  ENEMYCELL(3),
+  TRAP(4);
 
   private final int value;
   CellType(int value) {
