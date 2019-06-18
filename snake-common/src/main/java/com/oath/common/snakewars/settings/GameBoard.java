@@ -23,7 +23,8 @@ public class GameBoard
   public Cell currentCellPlayer1;
   @JsonProperty
   public Cell currentCellPlayer2;
-
+  @JsonProperty
+  public int trapCellCount;
 
   @JsonCreator
   public GameBoard(
@@ -40,6 +41,7 @@ public class GameBoard
         board[i][j] = CellType.EMPTY.getValue();
       }
     }
+    this.trapCellCount = trapCellCount;
     addTraps(board, trapCellCount);
     currentCellPlayer1 = new Cell(0, 0);
     currentCellPlayer2 = new Cell(0, 0);
@@ -54,6 +56,11 @@ public class GameBoard
   public int getBoardHeight()
   {
     return boardHeight;
+  }
+
+  public int getTrapCellCount()
+  {
+    return trapCellCount;
   }
 
   public void updateGameBoard(Cell player1, Cell player2)
@@ -108,7 +115,7 @@ public class GameBoard
   private void addTraps(int[][] board, int trapCount)
   {
     List<Integer> randomXList = IntStream.rangeClosed(0, boardHeight - 1).boxed().collect(Collectors.toList());
-    List<Integer> randomYList = IntStream.rangeClosed(0, boardHeight - 1).boxed().collect(Collectors.toList());
+    List<Integer> randomYList = IntStream.rangeClosed(0, boardWidth - 1).boxed().collect(Collectors.toList());
     Collections.shuffle(randomXList);
     Collections.shuffle(randomYList);
     for (int i =0; i < trapCount; i++) {
@@ -141,7 +148,7 @@ public class GameBoard
     return true;
   }
 
-  public List<List<Integer>> getTraps() {
+  public List<List<Integer>> fetchTraps() {
     List<List<Integer>> trapList = new ArrayList<>();
     for (int x = 0; x < boardHeight; x++) {
       for (int y = 0; y < boardWidth; y++) {

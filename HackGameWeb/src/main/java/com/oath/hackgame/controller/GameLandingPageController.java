@@ -48,15 +48,14 @@ public class GameLandingPageController
       gs = new GameState();
       moveManager = new MoveManager();
       gs.initGameState();
+      GameBoard gameBoard = new GameBoard(StartValues.BOARD_HEIGHT, StartValues.BOARD_WIDTH, StartValues.TRAP_CELL_COUNT);
       GameSettings initialSettings = new GameSettings(
           StartValues.TIME_BANK,
           StartValues.TIME_PER_MOVE,
           240,
           "Test",
           1,
-          StartValues.BOARD_HEIGHT,
-          StartValues.BOARD_WIDTH,
-          StartValues.TRAP_CELL_COUNT
+          gameBoard
       );
       GameBoard initialBoard = initialSettings.getGameBoard();
       int initPlayer1PosX = ThreadLocalRandom.current().nextInt(0, 16);
@@ -114,7 +113,7 @@ public class GameLandingPageController
       playerProps.put("player1y", initPlayer1Pos.getY());
       playerProps.put("player2x", initPlayer2Pos.getX());
       playerProps.put("player2y", initPlayer2Pos.getY());
-      playerProps.put("trapList", initialBoard.getTraps());
+      playerProps.put("trapList", initialBoard.fetchTraps());
       response.setContentType("text/plain");
       response.setHeader("Content-Type", "application/x-www-form-urlencoded");
       response.setHeader("Cache-Control", "no-cache");

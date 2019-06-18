@@ -20,12 +20,13 @@ function initGame() {
  	    	var player1y = obj.player1y;
  	    	var player2x = obj.player2x;
  	    	var player2y = obj.player2y;
+			var trapList = obj.trapList;
  	    	player1name = obj.player1name;
  	    	player2name = obj.player2name;
  	    	document.getElementById("player1name").innerHTML = player1name;
  	    	document.getElementById("player2name").innerHTML = player2name;
  	    	console.log("INIT GAME COORD "+player1x+" "+player1y+" , "+player2x+" "+player2y);
- 	    	initRender(player1x, player1y, player2x, player2y);
+			initRender(player1x, player1y, player2x, player2y, trapList);
  	    }
  	}
  	//xhttp.open("POST", "/"+servletName+"/game/getInitGameState", true);
@@ -35,7 +36,7 @@ function initGame() {
  	xhttp.send();
 }
 
-function initRender(player1x, player1y, player2x, player2y) {
+function initRender(player1x, player1y, player2x, player2y, trapList) {
     var player1LineElem = document.getElementById("player1line");
     var player2LineElem = document.getElementById("player2line");
     var player1xcoord = 80 + (60 * player1y);
@@ -51,8 +52,19 @@ function initRender(player1x, player1y, player2x, player2y) {
     player2LineElem.setAttribute("y1", player2ycoord);
     player2LineElem.setAttribute("x2", player2xcoord + 3);
     player2LineElem.setAttribute("y2", player2ycoord);
-    
-    document.getElementById("player1line").style.visibility = "visible";
+	for (var i=0; i<trapList.length; i++)
+	{
+		var trapIterElement = "rect";
+		for (var j=0; j<trapList[i].length; j++)
+		{
+			trapIterElement += trapList[i][j];
+		}
+		var renderedTrap = document.getElementById(trapIterElement);
+		renderedTrap.style.fill = "black";
+	}
+
+
+	document.getElementById("player1line").style.visibility = "visible";
     document.getElementById("player2line").style.visibility = "visible";
 }
 
