@@ -114,6 +114,8 @@ public class GameLandingPageController
       playerProps.put("player2x", initPlayer2Pos.getX());
       playerProps.put("player2y", initPlayer2Pos.getY());
       playerProps.put("trapList", initialBoard.fetchTraps());
+
+      //playerProps.put("trapList", ImmutableList.of(ImmutableList.of(5,2),ImmutableList.of(10,4)));
       response.setContentType("text/plain");
       response.setHeader("Content-Type", "application/x-www-form-urlencoded");
       response.setHeader("Cache-Control", "no-cache");
@@ -167,7 +169,6 @@ public class GameLandingPageController
         //TODO Replace currMove with round
         sendGameStateToPlayers(gs.getCurrMove());
         //sendGameStateToPlayers( gs.getRoundNumber() );
-
         //simulateGame();
         try {
           BlockingQueue<PlayerMove> currentQueue = moveManager.getBlockingMovesQueue();
@@ -183,7 +184,7 @@ public class GameLandingPageController
             pl1 = playerMove1;
             pl2 = playerMove2;
           }
-          Thread.sleep(2000);
+          Thread.sleep(1200);
           System.out.println("Got player1 moves as " + pl1.getMoveType().toString());
           System.out.println("Got player2 moves as " + pl2.getMoveType().toString());
           fw.append("Got player1 moves as " + pl1.getMoveType().toString());

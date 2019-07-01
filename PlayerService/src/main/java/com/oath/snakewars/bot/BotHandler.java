@@ -20,6 +20,9 @@ public class BotHandler
     MoveType mt = MoveType.PASS;
     try {
       mt = genericBot.makeMove(botState);
+      if (mt == null) {
+        mt = MoveType.PASS;
+      }
     } catch(Exception e) {
       logger.error(GameGlobal.getPlayerName() + " Code threw error",e);
       mt = MoveType.PASS;

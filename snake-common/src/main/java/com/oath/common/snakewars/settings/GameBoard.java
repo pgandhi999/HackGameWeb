@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oath.common.snakewars.board.Cell;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class GameBoard
 {
@@ -114,15 +112,32 @@ public class GameBoard
 
   private void addTraps(int[][] board, int trapCount)
   {
+    int remainingTrapCount = trapCount - boardHeight;
+    int trapLimit = boardHeight;
+    if (remainingTrapCount < 0) {
+      trapLimit = trapCount;
+    }
     List<Integer> randomXList = IntStream.rangeClosed(0, boardHeight - 1).boxed().collect(Collectors.toList());
     List<Integer> randomYList = IntStream.rangeClosed(0, boardWidth - 1).boxed().collect(Collectors.toList());
     Collections.shuffle(randomXList);
     Collections.shuffle(randomYList);
-    for (int i =0; i < trapCount; i++) {
+    for (int i =0; i < trapLimit; i++) {
       int trapXCell = randomXList.get(i);
       int trapYCell = randomYList.get(i);
       if (board[trapXCell][trapYCell] != CellType.TRAP.getValue()) {
         board[trapXCell][trapYCell] = CellType.TRAP.getValue();
+      }
+    }
+    if (remainingTrapCount > 0) {
+      trapLimit = trapCount;
+      Collections.shuffle(randomXList);
+      Collections.shuffle(randomYList);
+      for (int i =0; i < remainingTrapCount; i++) {
+        int trapXCell = randomXList.get(i);
+        int trapYCell = randomYList.get(i);
+        if (board[trapXCell][trapYCell] != CellType.TRAP.getValue()) {
+          board[trapXCell][trapYCell] = CellType.TRAP.getValue();
+        }
       }
     }
   }

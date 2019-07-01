@@ -16,7 +16,7 @@ public class SerdeTest
   public static void main (String args[]) throws IOException
   {
     //GameBoardTest g = new GameBoardTest(4,4);
-    GameBoard g = new GameBoard(4,4,10);
+    GameBoard g = new GameBoard(4,4, 10);
 
     //GameUpdate gu = new GameUpdate(1,g);
     ObjectMapper objectMapper = new ObjectMapper();
