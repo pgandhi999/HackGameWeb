@@ -3,6 +3,8 @@ package com.oath.common.snakewars.settings;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.oath.common.snakewars.board.Cell;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameBoardState
@@ -93,6 +95,18 @@ public class GameBoardState
     System.out.println("Swapped Value at enemy cell is: "+enemyCurrentCell.getX()+ " "+enemyCurrentCell.getY());*/
 
   }
+  public List<Cell> fetchTrapCells() {
+    ArrayList<Cell> trapList = new ArrayList<>();
+    for (int i = 0; i < boardHeight; i++) {
+      for (int j = 0; j < boardWidth; j++) {
+        if ( board[i][j] == CellType.TRAP.getValue()) {
+          trapList.add(new Cell(i,j));
+        };
+      }
+    }
+    return trapList;
+  }
+
   public Cell getMyCurrentCell()
   {
     return myCurrentCell;
@@ -112,6 +126,12 @@ public class GameBoardState
   public void setCellContent(Cell position, int cellType)
   {
     board[position.getX()][position.getY()] = cellType;
+  }
+  public boolean isTrap( Cell cell) {
+    if (board[cell.getX()][cell.getY()] == CellType.TRAP.getValue()) {
+      return true;
+    }
+    return false;
   }
 }
 

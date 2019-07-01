@@ -8,22 +8,18 @@ public class TournamentBracket
   public static void main (String args[]) {
     Random rand = new Random();
     ArrayList<String> playerList = new ArrayList<String>(16);
-    playerList.add("Unteam");
-    playerList.add("Janith");
-    playerList.add("Xuefeng");
+    playerList.add("Rishi");
     playerList.add("Team B551");
     playerList.add("Aaron Canary");
-    playerList.add("Edward");
-    playerList.add("Aaron Klish");
-    playerList.add("abc");
+    playerList.add("Cheezesnake");
+    playerList.add("Onix");
+    playerList.add("5G");
     playerList.add("mEatU");
-    playerList.add("Pradeep");
-    playerList.add("Aditya");
+    playerList.add("Jonathan");
+    playerList.add("TheWall");
     playerList.add("Oleksiy");
     playerList.add("Kedar");
-    playerList.add("Naila");
-    playerList.add("Govind");
-    playerList.add("Tarrant");
+    playerList.add("SnakeBite");
     while (!playerList.isEmpty()) {
       int player1 = rand.nextInt(playerList.size());
       String player1Name = playerList.get(player1);

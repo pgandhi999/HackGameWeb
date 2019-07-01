@@ -73,30 +73,31 @@ public class MoveManager
   public Map<String,String> sendInitialSettings (List<String> playerServiceUrls, final GameSettings gameSettings) {
     Map<String,String> playerNames = new HashMap<String, String>();
     List<Future> responseFutures = new ArrayList<Future>();
+    System.out.println("BOARD HEIGHT IS" + gameSettings.getGameBoard().getBoardHeight());
     managerExec = Executors.newFixedThreadPool(2);
     for (final String playerServiceUrl : playerServiceUrls) {
-        System.out.println("Sending initial settings to " + playerServiceUrl);
-        responseFutures.add(managerExec.submit(
-            new Callable()
+      System.out.println("Sending initial settings to " + playerServiceUrl);
+      responseFutures.add(managerExec.submit(
+          new Callable()
+          {
+            public String call()
             {
-              public String call()
-              {
-                //Make calls to config API and move API calls
-                String playerName = postInitSettingsToUser(playerServiceUrl, gameSettings);
-                return playerName;
-              }
+              //Make calls to config API and move API calls
+              String playerName = postInitSettingsToUser(playerServiceUrl, gameSettings);
+              return playerName;
             }
-        ));
-        try {
-          for (Future fut : responseFutures) {
-            String playName = String.valueOf(fut.get());
-            playerNames.put(playerServiceUrl, playName);
           }
-        }
-        catch (Exception ie) {
-          System.out.println("Thread interrupted!");
+      ));
+      try {
+        for (Future fut : responseFutures) {
+          String playName = String.valueOf(fut.get());
+          playerNames.put(playerServiceUrl, playName);
         }
       }
+      catch (Exception ie) {
+        System.out.println("Thread interrupted!");
+      }
+    }
     return playerNames;
   }
   private String postInitSettingsToUser (String playerServiceUrl, GameSettings gameSettings) {
@@ -106,6 +107,7 @@ public class MoveManager
     try {
       StringEntity requestEntity = new StringEntity(
           objectMapper.writeValueAsString(gameSettings));
+      System.out.println("Settings JSON IS "+gameSettings.getGameBoard().boardHeight);
       httpPost.setEntity(requestEntity);
       CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
       //String responseString = new BasicResponseHandler().handleResponse(httpResponse);
@@ -123,25 +125,25 @@ public class MoveManager
     for (final PlayerInfo player:playerInfoList) {
       futureList.add(
           managerExec.submit(
-          new Runnable()
-          {
-            public void run()
-            {
-              //Make calls to config API and move API calls
-              System.out.println("Sending update request to"+player.getPlayerName());
-              if (postConfigToPlayer(player,gameUpdate)) {
-                MoveType nextMove = getMoveFromPlayer(player);
-                System.out.println("Adding move from "+player.getPlayerName() + "for round" +gameUpdate.getRoundNumber()+ " to queue.");
-                // Resort to fail fast for now
-                blockingMovesQueue.add(new PlayerMove(nextMove,gameUpdate.getRoundNumber(),player));
+              new Runnable()
+              {
+                public void run()
+                {
+                  //Make calls to config API and move API calls
+                  System.out.println("Sending update request to"+player.getPlayerName());
+                  if (postConfigToPlayer(player,gameUpdate)) {
+                    MoveType nextMove = getMoveFromPlayer(player);
+                    System.out.println("Adding move from "+player.getPlayerName() + "for round" +gameUpdate.getRoundNumber()+ " to queue.");
+                    // Resort to fail fast for now
+                    blockingMovesQueue.add(new PlayerMove(nextMove,gameUpdate.getRoundNumber(),player));
+                  }
+                  else {
+                    //TODO this should return previous move
+                    System.out.println("Received false update from player "+ player.getPlayerName());
+                  }
+                }
               }
-              else {
-                //TODO this should return previous move
-                System.out.println("Received false update from player "+ player.getPlayerName());
-              }
-            }
-          }
-      )
+          )
       );
     }
     return futureList;
@@ -180,10 +182,11 @@ public class MoveManager
       HttpClientBuilder builder = HttpClientBuilder.create();
       builder.setDefaultRequestConfig(requestBuilder.build());
       HttpClient timedClient = builder.build();
-
+      long startTimeInMillis = System.currentTimeMillis();
       HttpResponse httpResponse = timedClient.execute(httpGet);
+      long timeTaken = System.currentTimeMillis() - startTimeInMillis;
       MoveType playerMove = objectMapper.readValue(httpResponse.getEntity().getContent(),MoveType.class);
-      System.out.println("Got move "+playerMove.toString());
+      System.out.println("Got move "+playerMove.toString() + "in " + timeTaken + "ms");
       return playerMove;
     }
     catch (SocketTimeoutException exception) {

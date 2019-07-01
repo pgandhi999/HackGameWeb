@@ -47,6 +47,7 @@ public class GameSettings
     return botId;
   }
 
+
   public GameBoard getGameBoard()
   {
     return gameBoard;
@@ -67,8 +68,7 @@ public class GameSettings
       @JsonProperty("maxTimeBank") int maxTimeBank,
       @JsonProperty("selfBotName") String selfBotName,
       @JsonProperty("botId") int botId,
-      @JsonProperty("boardHeight") int boardHeight,
-      @JsonProperty("boardWidth") int boardWidth
+      @JsonProperty("gameBoard") GameBoard gameBoard
   )
   {
     this.timeBank = timeBank;
@@ -77,6 +77,6 @@ public class GameSettings
     this.playerNames = new ArrayList<String>();
     this.selfBotName = selfBotName;
     this.botId = botId;
-    this.gameBoard = new GameBoard(boardHeight, boardWidth);
+    this.gameBoard = gameBoard;
   }
 }
